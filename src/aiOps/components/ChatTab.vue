@@ -151,10 +151,12 @@
 import LucideIcon from './LucideIcon.vue';
 import Elements from './Elements.vue';
 import { getText, getTextArray } from '../utils/i18n.js';
+import { timerMixin } from '../utils/timerUtils.js';
 import aiChatOpsService from '../service/aiChatOpsService.js';
 
 export default {
   name: 'ChatTab',
+  mixins: [timerMixin],
   components: {
     LucideIcon,
     Elements
@@ -206,9 +208,6 @@ export default {
       pendingMessages: [],
       renderingScheduled: false,
       batchUpdateTimeout: null,
-
-      activeTimers: new Set(),
-      activeIntervals: new Set(),
 
       formattedWelcomeMessage: '',
 
@@ -407,7 +406,7 @@ export default {
     startMemoryMonitoring() {
       if (performance.memory) {
         this.stopMemoryMonitoring();
-        this.memoryMonitorInterval = this.safeSetInterval(() => {
+        this.memoryMonitorInterval = this.timerManager.safeSetInterval(() => {
           this.measureMemoryUsage();
         }, 60000);
         this.measureMemoryUsage();
@@ -416,63 +415,22 @@ export default {
 
     stopMemoryMonitoring() {
       if (this.memoryMonitorInterval) {
-        this.safeClearInterval(this.memoryMonitorInterval);
+        this.timerManager.safeClearInterval(this.memoryMonitorInterval);
         this.memoryMonitorInterval = null;
-      }
-    },
-
-    safeSetTimeout(callback, delay) {
-      const timerId = setTimeout(() => {
-        this.activeTimers.delete(timerId);
-        if (typeof callback === 'function') {
-          callback();
-        }
-      }, delay);
-      this.activeTimers.add(timerId);
-      return timerId;
-    },
-
-    safeSetInterval(callback, interval) {
-      const intervalId = setInterval(() => {
-        if (typeof callback === 'function') {
-          callback();
-        }
-      }, interval);
-      this.activeIntervals.add(intervalId);
-      return intervalId;
-    },
-
-    safeClearTimeout(timerId) {
-      if (timerId && this.activeTimers.has(timerId)) {
-        clearTimeout(timerId);
-        this.activeTimers.delete(timerId);
-      }
-    },
-
-    safeClearInterval(intervalId) {
-      if (intervalId && this.activeIntervals.has(intervalId)) {
-        clearInterval(intervalId);
-        this.activeIntervals.delete(intervalId);
       }
     },
 
     clearAllTimers() {
-      this.activeTimers.forEach(timerId => {
-        clearTimeout(timerId);
-      });
-      this.activeTimers.clear();
-
-      this.activeIntervals.forEach(intervalId => {
-        clearInterval(intervalId);
-      });
-      this.activeIntervals.clear();
-
+      // Clear TimerManager timers
+      this.timerManager.clearAllTimers();
+      
+      // Clear remaining manually managed timers
       if (this.memoryMonitorInterval) {
-        clearInterval(this.memoryMonitorInterval);
+        this.timerManager.safeClearInterval(this.memoryMonitorInterval);
         this.memoryMonitorInterval = null;
       }
       if (this.batchUpdateTimeout) {
-        clearTimeout(this.batchUpdateTimeout);
+        this.timerManager.safeClearTimeout(this.batchUpdateTimeout);
         this.batchUpdateTimeout = null;
       }
     },
@@ -519,7 +477,7 @@ export default {
       const container = this.$refs.messageInput?.closest('.input-container');
       if (container) {
         container.classList.add('enhanced-input--focused');
-        this.safeSetTimeout(() => {
+        this.timerManager.safeSetTimeout(() => {
           container.classList.remove('enhanced-input--focused');
         }, 150);
       }
@@ -889,7 +847,7 @@ export default {
           container.style.scrollBehavior = 'auto';
           container.scrollTop = container.scrollHeight;
 
-          this.safeSetTimeout(() => {
+          this.timerManager.safeSetTimeout(() => {
             container.style.scrollBehavior = 'smooth';
           }, 100);
         }
@@ -1041,7 +999,7 @@ export default {
           navigator.clipboard.writeText(pre.innerText).then(() => {
             button.textContent = 'Copied!';
             button.classList.add('copied');
-            this.safeSetTimeout(() => {
+            this.timerManager.safeSetTimeout(() => {
               button.textContent = 'Copy';
               button.classList.remove('copied');
             }, 2000);

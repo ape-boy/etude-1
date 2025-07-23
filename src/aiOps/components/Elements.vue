@@ -75,10 +75,12 @@
 <script>
 import LucideIcon from './LucideIcon.vue';
 import { getTextArray } from '../utils/i18n.js';
+import { timerMixin } from '../utils/timerUtils.js';
 import aiChatOpsService from '../service/aiChatOpsService.js';
 
 export default {
   name: 'Elements',
+  mixins: [timerMixin],
   components: {
     LucideIcon
   },
@@ -256,7 +258,7 @@ export default {
 
       this.$emit('copy-message', messageData);
 
-      setTimeout(() => {
+      this.timerManager.safeSetTimeout(() => {
         this.localCopyStatus = null;
       }, 2000);
     },
@@ -294,22 +296,22 @@ export default {
       this.dotCount = 0;
       this.currentLoadingMessage = this.getRandomLoadingMessage();
 
-      this.dotInterval = setInterval(() => {
+      this.dotInterval = this.timerManager.safeSetInterval(() => {
         this.dotCount = (this.dotCount + 1) % 6;
       }, 300);
 
-      this.messageInterval = setInterval(() => {
+      this.messageInterval = this.timerManager.safeSetInterval(() => {
         this.currentLoadingMessage = this.getRandomLoadingMessage();
       }, 1500);
     },
 
     stopDotAnimation() {
       if (this.dotInterval) {
-        clearInterval(this.dotInterval);
+        this.timerManager.safeClearInterval(this.dotInterval);
         this.dotInterval = null;
       }
       if (this.messageInterval) {
-        clearInterval(this.messageInterval);
+        this.timerManager.safeClearInterval(this.messageInterval);
         this.messageInterval = null;
       }
     },

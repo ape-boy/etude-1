@@ -1,6 +1,8 @@
 // Utility service consolidating all non-API utility functions
 // Combines functions from aiChatOpsService.js and convertMarkdownToHtml.js
 
+import convertMarkdownToHtml from '../utils/convertMarkdownToHtml.js';
+
 let markdownConverter = null;
 
 const utilService = {
@@ -11,8 +13,7 @@ const utilService = {
   async loadMarkdownConverter() {
     if (!markdownConverter) {
       try {
-        const module = await import('./convertMarkdownToHtml.js');
-        markdownConverter = module.convertMarkdownToHtml;
+        markdownConverter = new convertMarkdownToHtml();
       } catch (error) {
         throw error;
       }
@@ -26,7 +27,7 @@ const utilService = {
     
     try {
       const converter = await this.loadMarkdownConverter();
-      return converter(markdown);
+      return converter.convert(markdown);
     } catch (error) {
       return markdown;
     }

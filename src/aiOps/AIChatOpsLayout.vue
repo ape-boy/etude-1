@@ -173,6 +173,7 @@
 <script>
 import aiChatOpsService from './service/aiChatOpsService.js';
 import { getText } from './utils/i18n.js';
+import { timerMixin } from './utils/timerUtils.js';
 import ChatTab from './components/ChatTab.vue';
 import FeedbackTab from './components/FeedbackTab.vue';
 import Elements from './components/Elements.vue';
@@ -180,6 +181,7 @@ import LucideIcon from './components/LucideIcon.vue';
 
 export default {
   name: 'AIChatOpsLayout',
+  mixins: [timerMixin],
   components: {
     ChatTab,
     FeedbackTab,
@@ -215,9 +217,6 @@ export default {
       pendingRequests: new Map(),
       healthCheckInterval: null,
       cacheCleanupInterval: null,
-
-      activeTimers: new Set(),
-      activeIntervals: new Set(),
       availableThemes: [
         { key: 'theme-ai-chatops', name: 'AI-ChatOps', displayName: 'AI' },
         { key: 'theme-heritage', name: 'Heritage', displayName: 'HT' },
@@ -425,7 +424,7 @@ export default {
         this.isClosing = true;
         this.isOpen = false;
 
-        this.safeSetTimeout(() => {
+        this.timerManager.safeSetTimeout(() => {
           this.isInitialized = false;
           this.isClosing = false;
         }, 150);
@@ -450,7 +449,7 @@ export default {
         this.saveCurrentMessages();
         if (this.$refs.chatTab) this.$refs.chatTab.resetToInitialState();
 
-        this.safeSetTimeout(() => {
+        this.timerManager.safeSetTimeout(() => {
           this.isInitialized = false;
         }, 150);
       });
@@ -630,70 +629,29 @@ export default {
 
     startCacheCleanup() {
       this.stopCacheCleanup();
-      this.cacheCleanupInterval = this.safeSetInterval(() => {
+      this.cacheCleanupInterval = this.timerManager.safeSetInterval(() => {
         this.cleanupCache();
       }, 300000);
     },
 
     stopCacheCleanup() {
       if (this.cacheCleanupInterval) {
-        this.safeClearInterval(this.cacheCleanupInterval);
+        this.timerManager.safeClearInterval(this.cacheCleanupInterval);
         this.cacheCleanupInterval = null;
       }
     },
 
-    safeSetTimeout(callback, delay) {
-      const timerId = setTimeout(() => {
-        this.activeTimers.delete(timerId);
-        if (typeof callback === 'function') {
-          callback();
-        }
-      }, delay);
-      this.activeTimers.add(timerId);
-      return timerId;
-    },
-
-    safeSetInterval(callback, interval) {
-      const intervalId = setInterval(() => {
-        if (typeof callback === 'function') {
-          callback();
-        }
-      }, interval);
-      this.activeIntervals.add(intervalId);
-      return intervalId;
-    },
-
-    safeClearTimeout(timerId) {
-      if (timerId && this.activeTimers.has(timerId)) {
-        clearTimeout(timerId);
-        this.activeTimers.delete(timerId);
-      }
-    },
-
-    safeClearInterval(intervalId) {
-      if (intervalId && this.activeIntervals.has(intervalId)) {
-        clearInterval(intervalId);
-        this.activeIntervals.delete(intervalId);
-      }
-    },
-
     clearAllTimers() {
-      this.activeTimers.forEach(timerId => {
-        clearTimeout(timerId);
-      });
-      this.activeTimers.clear();
-
-      this.activeIntervals.forEach(intervalId => {
-        clearInterval(intervalId);
-      });
-      this.activeIntervals.clear();
-
+      // Clear TimerManager timers
+      this.timerManager.clearAllTimers();
+      
+      // Clear remaining intervals manually managed
       if (this.healthCheckInterval) {
-        clearInterval(this.healthCheckInterval);
+        this.timerManager.safeClearInterval(this.healthCheckInterval);
         this.healthCheckInterval = null;
       }
       if (this.cacheCleanupInterval) {
-        clearInterval(this.cacheCleanupInterval);
+        this.timerManager.safeClearInterval(this.cacheCleanupInterval);
         this.cacheCleanupInterval = null;
       }
     },
@@ -829,9 +787,9 @@ export default {
 
     startHealthCheck() {
       if (this.healthCheckInterval) {
-        this.safeClearInterval(this.healthCheckInterval);
+        this.timerManager.safeClearInterval(this.healthCheckInterval);
       }
-      this.healthCheckInterval = this.safeSetInterval(() => {
+      this.healthCheckInterval = this.timerManager.safeSetInterval(() => {
         aiChatOpsService.healthCheck()
           .then(response => {
             this.isConnected = response.success;
@@ -844,7 +802,7 @@ export default {
 
     stopHealthCheck() {
       if (this.healthCheckInterval) {
-        this.safeClearInterval(this.healthCheckInterval);
+        this.timerManager.safeClearInterval(this.healthCheckInterval);
         this.healthCheckInterval = null;
       }
     },
