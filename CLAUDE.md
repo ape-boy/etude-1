@@ -2,36 +2,70 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Repository Status
+## Project Overview
 
-This is a newly initialized Git repository with minimal setup. The repository currently contains only configuration files:
+This is an AI ChatOps demo application built with Vue.js 3 and Vite. It provides a chat interface with AI-powered personas for different operational categories (personal, general, operation). The application includes both user-facing chat functionality and admin interfaces for managing personas and system prompts.
 
-- `.claude/settings.local.json` - Claude Code permissions configuration
-- `.vscode/settings.json` - VS Code settings with git warning suppression
+## Development Commands
 
-## Project State
+From `src/package.json`:
+- `npm run dev` - Start development server (runs on port 3000)
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run serve` - Serve production build
+- `npm run mock:serve` - Start mock server
+- `npm run test` - Run Playwright tests
+- `npm run test:ui` - Run Playwright tests with UI
+- `npm run test:report` - Show test report
 
-This appears to be a fresh "aiops" project that has been initialized but does not yet contain any source code, build configurations, or documentation. Future development work will need to establish:
+## Architecture Overview
 
-- Project structure and programming language(s)
-- Build system and dependency management
-- Testing framework
-- Development workflow
+### Tech Stack
+- **Frontend**: Vue.js 3 with Composition API
+- **Build Tool**: Vite
+- **HTTP Client**: Axios
+- **Testing**: Playwright
+- **Styling**: CSS with custom properties and scoped styles
 
-## Development Setup
+### Key Components Structure
+- `src/aiOps/AIChatOpsLayout.vue` - Main layout component that orchestrates the entire chat experience
+- `src/aiOps/components/` - Reusable UI components (ChatTab, FeedbackTab, Elements, LucideIcon)
+- `src/aiOps/service/aiChatOpsService.js` - Central API service layer for all backend communication
+- `src/aiOps/utils/` - Utility functions for i18n and timers
+- `src/admin/` - Admin interface components for persona and prompt management
 
-Since this is an empty repository, there are currently no build, test, or development commands available. Once the project structure is established, this file should be updated with the relevant commands for:
+### Application Flow
+1. **Category Selection**: Users first choose from personal, general, or operation categories
+2. **Persona Selection**: Within each category, users select specific AI personas 
+3. **Chat Interface**: Interactive chat with selected persona, including message history and quick questions
+4. **Admin Functions**: System administration for managing personas, prompts, and viewing analytics
 
-- Installing dependencies
-- Running the application
-- Building for production
-- Running tests
-- Linting and formatting
+### API Integration
+- Base URL: `http://localhost:3001` (proxied from port 3000)
+- Backend API expected on port 3005
+- Comprehensive error handling with fallback responses
+- Session management and conversation history
+- Health check monitoring
 
-## Notes for Future Development
+### State Management
+- Local component state using Vue 3 reactive data
+- LocalStorage for user preferences (language, theme, sessions)
+- Message caching system with LRU-style cleanup
+- Real-time processing state tracking
 
-When working in this repository, consider establishing conventions for:
-- Code organization and module structure
-- Testing patterns and coverage requirements
-- Documentation standards
-- Deployment procedures
+### Key Features
+- Multi-language support (Korean/English)
+- Multiple themes (AI-ChatOps, Heritage, Classic, Retro)
+- Responsive design with mobile support
+- Real-time chat with AI personas
+- Conversation history and analytics
+- System administration interface
+- Easter egg features
+
+## Development Notes
+
+- API service includes comprehensive mock fallbacks for development
+- Uses Vue 3 Composition API patterns throughout
+- Scoped CSS with CSS custom properties for theming
+- Extensive error handling and user feedback
+- Memory management for chat history and timers

@@ -1022,30 +1022,10 @@ export default {
           description: 'Automatically generates weekly development metrics',
           enabled: true
         },
-        'project_manager': {
-          query: 'Show me current project status and sprint progress',
-          description: 'Displays current project overview and team metrics',
+        'weekly_report': {
+          query: '주간 보고서를 작성해줘',
+          description: 'Automatically generates comprehensive weekly reports',
           enabled: true
-        },
-        'system_admin': {
-          query: 'Check system performance and infrastructure health',
-          description: 'Provides system monitoring and performance metrics',
-          enabled: true
-        },
-        'data_analyst': {
-          query: 'Generate weekly data analytics and business insights',
-          description: 'Shows KPIs, user behavior, and predictive analytics',
-          enabled: true
-        },
-        'personal_assistant': {
-          query: 'Show me weekly task progress and upcoming priorities',
-          description: 'Displays personal productivity metrics and schedule',
-          enabled: false // Disabled for personal assistant to allow manual interaction
-        },
-        'business_analyst': {
-          query: 'Analyze current business requirements and processes',
-          description: 'Provides business analysis and improvement recommendations',
-          enabled: false // Disabled for business analyst to allow requirement gathering
         }
       };
 
