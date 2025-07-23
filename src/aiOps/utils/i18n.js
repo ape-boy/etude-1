@@ -228,9 +228,6 @@ const i18nResources = {
     defaultTestMessage: 'Hello. This is a system prompt test.',
 
     loadingMessages: [
-  "Prompting...",
-  "Thinking...",
-  "Analyzing...",
   "Processing...",
   "Reasoning...",
   "Inferring...",
@@ -259,8 +256,50 @@ const i18nResources = {
   "Preparing...",
   "Assembling...",
   "Crafting...",
-  "Polishing..."
-    ]
+  "Polishing...",
+  "Consulting the Oracle...",
+  "Hacking into the Matrix...",
+  "Bribing ChatGPT with data...",
+  "Pinging Gemini for gossip...",
+  "Sneaking a peek at Claude’s notes...",
+  "Asking Qwen in Mandarin...",
+  "Eavesdropping on Anthropic’s secrets...",
+  "Assembling thoughts like IKEA furniture...",
+  "Debating myself internally...",
+  "Whispering to the neural net...",
+  "Stretching AI neurons...",
+  "Doing mental windsurfing...",
+  "Spying on rival models...",
+  "Borrowing thoughts from the collective hive...",
+  "Reverse engineering your question...",
+  "Wrestling with quantum thoughts...",
+  "Negotiating with logic...",
+  "Tuning into the latent space...",
+  "Mind-palace indexing...",
+  "Firing up the thought reactor...",
+  "Browsing the multiverse for answers...",
+  "Translating silence into insight...",
+  "Convincing the GPUs to cooperate...",
+  "Syncing with dimensional intuition...",
+  "Bridging the semantic gap...",
+  "Unlocking inner monologue...",
+  "Replaying all known conversations in 0.3s...",
+  "Dreaming up the response...",
+  "Calling in backup from the AI council...",
+  "Charging my language core...",
+  "Time traveling for perspective...",
+  "Brewing linguistic coffee...",
+  "Unleashing synthetic creativity...",
+  "Channeling digital muse...",
+  "Shuffling logic decks...",
+  "Sculpting abstract thoughts...",
+  "Transmuting syntax into meaning...",
+  "Extracting patterns from chaos...",
+  "Taking a philosophical detour...",
+  "Mentally Googling...",
+  "Doing math... pretending it’s easy..."
+]
+
   }
 };
 
