@@ -21,16 +21,28 @@
   cursor: text;
 }
 
+.ai-chatops-chat button,
 .ai-chatops-chat button:hover,
 .ai-chatops-chat a:hover,
 .ai-chatops-chat [onclick]:hover,
 .ai-chatops-chat [tabindex]:hover {
-  cursor: pointer;
+  cursor: pointer !important;
 }
 
-.ai-chatops-chat input:hover,
+/* Ensure all btn-system elements have pointer cursor */
+.ai-chatops-chat .btn-system,
+.ai-chatops-chat .btn-system:hover,
+.ai-chatops-chat .btn-system:focus,
+.ai-chatops-chat .btn-system:active {
+  cursor: pointer !important;
+}
+
+.ai-chatops-chat input[type="text"]:hover,
+.ai-chatops-chat input[type="password"]:hover,
+.ai-chatops-chat input[type="email"]:hover,
+.ai-chatops-chat input[type="search"]:hover,
 .ai-chatops-chat textarea:hover {
-  cursor: text;
+  cursor: text !important;
 }
 
 /* Cross-browser cursor enforcement */
@@ -448,7 +460,7 @@ body {
 
 /* Interactive card behavior */
 .card-hover {
-  cursor: pointer;
+  cursor: pointer !important;
 }
 
 .card-hover:hover:not(.disabled) {
@@ -620,7 +632,7 @@ body {
   font-weight: 500;
   line-height: 1.5;
   text-decoration: none;
-  cursor: pointer;
+  cursor: pointer !important;
   transition: all var(--motion-fast);
   user-select: none;
   white-space: nowrap;
@@ -632,7 +644,7 @@ body {
 
 .btn-system:disabled {
   opacity: 0.6;
-  cursor: not-allowed;
+  cursor: not-allowed !important;
   pointer-events: none;
 }
 
