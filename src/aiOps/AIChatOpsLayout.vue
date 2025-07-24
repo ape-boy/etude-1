@@ -73,7 +73,7 @@
           </div>
 
           <div class="category-container flex-1 flex-column px-xl pb-lg">
-            <div class="category-grid flex-1 flex-column gap-md mb-lg">
+            <div class="category-grid flex-1 flex-column gap-sm mb-lg">
               <div v-for="category in categories" :key="category.key" @click="selectCategory(category.key)"
                 class="category-card card-base card-hover card-shadow flex-align-center gap-md p-md"
                 :class="{ 'card-disabled': chatProcessingCount > 0 }">
