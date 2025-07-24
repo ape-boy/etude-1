@@ -7,7 +7,7 @@
         <p>페르소나 생성, 수정 및 시스템 프롬프트 관리</p>
       </div>
       <div class="header-actions">
-        <button @click="refreshData" :disabled="isLoading" class="btn-refresh">
+        <button @click="refreshData" :disabled="isLoading" class="btn-system btn-system--primary btn-system--sm">
           <span v-if="isLoading">로딩중...</span>
           <span v-else>새로고침</span>
         </button>
@@ -26,7 +26,7 @@
             </option>
           </select>
         </div>
-        <button @click="createNewPersona" class="btn-new">+ 새 페르소나</button>
+        <button @click="createNewPersona" class="btn-system btn-system--accent btn-system--md">+ 새 페르소나</button>
       </div>
     </section>
 
@@ -41,14 +41,14 @@
           <div class="editor-header">
             <h2>{{ editMode === 'create' ? '새 페르소나 생성' : '페르소나 편집' }}</h2>
             <div class="editor-actions">
-              <button v-if="editMode !== 'create'" @click="deleteCurrentPersona" class="btn-delete"
+              <button v-if="editMode !== 'create'" @click="deleteCurrentPersona" class="btn-system btn-system--danger btn-system--sm"
                 :disabled="isDeleting">
                 {{ isDeleting ? '삭제중...' : '삭제' }}
               </button>
-              <button @click="savePersona" :disabled="!canSave || isSaving" class="btn-save">
+              <button @click="savePersona" :disabled="!canSave || isSaving" class="btn-system btn-system--success btn-system--sm">
                 {{ isSaving ? '저장중...' : '저장' }}
               </button>
-              <button v-if="editMode !== 'view'" @click="cancelEdit" class="btn-cancel">
+              <button v-if="editMode !== 'view'" @click="cancelEdit" class="btn-system btn-system--ghost btn-system--sm">
                 취소
               </button>
             </div>
@@ -61,7 +61,7 @@
                 <div class="form-group">
                   <label>페르소나 코드 *</label>
                   <input v-model="editingPersona.personaCode" type="text" :readonly="editMode === 'edit'"
-                    placeholder="영문, 숫자, 언더스코어만 사용">
+                    placeholder="영문, 숫자, 언더스코어만 사용" class="input-base input-sm">
                 </div>
                 <div class="form-group">
                   <label>카테고리 *</label>
@@ -75,19 +75,19 @@
                 </div>
                 <div class="form-group form-group-full">
                   <label>제목 (한글) *</label>
-                  <input v-model="editingPersona.title" type="text">
+                  <input v-model="editingPersona.title" type="text" class="input-base input-sm">
                 </div>
                 <div class="form-group form-group-full">
                   <label>설명 (한글) *</label>
-                  <textarea v-model="editingPersona.description" rows="2"></textarea>
+                  <textarea v-model="editingPersona.description" rows="2" class="input-base textarea-base input-sm"></textarea>
                 </div>
                 <div class="form-group form-group-full">
                   <label>설명 (영문) *</label>
-                  <textarea v-model="editingPersona.descriptionEn" rows="2"></textarea>
+                  <textarea v-model="editingPersona.descriptionEn" rows="2" class="input-base textarea-base input-sm"></textarea>
                 </div>
                 <div class="form-group form-group-full">
                   <label>환영 메시지 (마크다운 지원)</label>
-                  <textarea v-model="editingPersona.welcomeMsg" rows="3"></textarea>
+                  <textarea v-model="editingPersona.welcomeMsg" rows="3" class="input-base textarea-base input-sm"></textarea>
                 </div>
               </div>
             </section>
@@ -95,7 +95,7 @@
             <section class="form-section">
               <h4>시스템 프롬프트</h4>
               <div class="prompt-editor">
-                <textarea v-model="editingPersona.systemPrompt" rows="15" class="prompt-textarea"></textarea>
+                <textarea v-model="editingPersona.systemPrompt" rows="15" class="prompt-textarea input-base textarea-base"></textarea>
                 <div class="char-count">{{ editingPersona.systemPrompt?.length || 0 }}자</div>
               </div>
             </section>
@@ -103,8 +103,8 @@
             <section class="form-section">
               <h4>프롬프트 테스트</h4>
               <div class="test-area">
-                <textarea v-model="userPrompt" rows="3" placeholder="테스트할 메시지를 입력하세요..."></textarea>
-                <button @click="testPrompt" :disabled="!canTest" class="btn-test">
+                <textarea v-model="userPrompt" rows="3" placeholder="테스트할 메시지를 입력하세요..." class="input-base textarea-base input-sm"></textarea>
+                <button @click="testPrompt" :disabled="!canTest" class="btn-system btn-system--secondary btn-system--sm">
                   {{ isTesting ? '테스트중...' : '테스트 실행' }}
                 </button>
               </div>
@@ -619,24 +619,14 @@ Guidelines:
   font-size: 11px;
 }
 
-input[type="text"],
-select,
-textarea {
-  width: 100%;
-  padding: 6px 8px;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
+/* Admin input styling now uses unified input-base system */
+select {
   font-size: 12px;
-  font-family: inherit;
-  box-sizing: border-box;
   background-color: var(--panel-bg);
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-input[type="text"]:focus,
-select:focus,
-textarea:focus {
-  outline: none;
+select:focus {
   border-color: var(--active-list-item-border);
   box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.1);
 }
@@ -726,60 +716,9 @@ input[readonly] {
   margin-top: 0;
 }
 
-button {
-  padding: 4px 10px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 11px;
-  font-weight: 500;
-  transition: all 0.15s;
-  border: 1px solid var(--btn-default-border);
-  background-color: var(--btn-default-bg);
-  color: var(--btn-default-color);
-}
-
-button:hover {
-  opacity: 0.8;
-}
-
-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.6;
-}
-
 .editor-actions {
   display: flex;
   gap: 6px;
-}
-
-.btn-refresh {
-  background-color: var(--btn-primary-bg);
-  color: var(--btn-primary-color);
-  border-color: var(--btn-primary-bg);
-}
-
-.btn-new {
-  background-color: var(--btn-primary-bg);
-  color: var(--btn-primary-color);
-  border-color: var(--btn-primary-bg);
-}
-
-.btn-save {
-  background-color: var(--btn-success-bg);
-  color: var(--btn-success-color);
-  border-color: var(--btn-success-bg);
-}
-
-.btn-delete {
-  background-color: var(--btn-danger-bg);
-  color: var(--btn-danger-color);
-  border-color: var(--btn-danger-bg);
-}
-
-.btn-test {
-  background-color: var(--btn-primary-bg);
-  color: var(--btn-primary-color);
-  border-color: var(--btn-primary-bg);
 }
 
 @media (max-width: 1200px) {

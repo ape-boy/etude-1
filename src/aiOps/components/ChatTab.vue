@@ -2,11 +2,11 @@
   <div class="chat-tab">
     <div v-if="!selectedPersona" class="no-persona-selected">
       <div class="persona-selection-guide">
-        <div class="guide-icon">
+        <div class="guide-icon text-muted">
           <LucideIcon name="home-heart" fill="none" stroke="currentColor" :width="24" :height="24" />
         </div>
-        <h3 class="guide-title">{{ getText('noPersonaSelected') }}</h3>
-        <p class="guide-description">{{ getText('noPersonaDesc') }}</p>
+        <h3 class="guide-title text-primary">{{ getText('noPersonaSelected') }}</h3>
+        <p class="guide-description text-secondary">{{ getText('noPersonaDesc') }}</p>
       </div>
     </div>
 
@@ -72,11 +72,11 @@
         <div v-else-if="messages.length === 0" class="welcome-section">
           <div class="welcome-content">
             <div class="welcome-header">
-              <h2 class="welcome-title">
+              <h2 class="welcome-title text-primary">
                 {{ selectedPersona ? getPersonaDisplayName(selectedPersona) : '' }}
               </h2>
             </div>
-            <div class="welcome-message" v-if="formattedWelcomeMessage" v-html="formattedWelcomeMessage"></div>
+            <div class="welcome-message text-secondary" v-if="formattedWelcomeMessage" v-html="formattedWelcomeMessage"></div>
             <p class="welcome-description" v-else>{{ getText('welcomeTip') || '' }}</p>
           </div>
         </div>
@@ -104,7 +104,7 @@
           <div class="input-box">
             <textarea v-model="currentMessage" ref="messageInput" :placeholder="getText('inputPlaceholder')"
               @keydown="handleKeyDown" @input="handleInput" @focus="handleFocus" :disabled="isProcessing"
-              class="message-textarea form-input enhanced-input" />
+              class="message-textarea input-base input-enhanced form-input enhanced-input" />
 
             <div class="input-bottom-row">
               <div class="left-actions">
@@ -1074,19 +1074,16 @@ export default {
 
 .guide-icon {
   margin-bottom: var(--space-lg);
-  color: var(--color-text-muted);
 }
 
 .guide-title {
   font-size: var(--font-size-lg);
   font-weight: 600;
-  color: var(--color-text-primary);
   margin-bottom: var(--space-sm);
 }
 
 .guide-description {
   font-size: var(--font-size-base);
-  color: var(--color-text-secondary);
   line-height: 1.6;
 }
 
@@ -1166,7 +1163,6 @@ export default {
 .welcome-title {
   font-size: var(--font-size-xl);
   font-weight: 600;
-  color: var(--color-text-primary);
   margin: 0;
 }
 
@@ -1178,7 +1174,6 @@ export default {
 
 .welcome-message {
   font-size: var(--font-size-base);
-  color: var(--color-text-secondary);
   margin: 0;
   line-height: 1.5;
   padding: 0 var(--space-md);
@@ -1256,19 +1251,11 @@ export default {
 }
 
 .message-textarea {
-  width: 100%;
   height: 38px;
   min-height: 38px;
   max-height: 400px;
   border: 1px solid rgba(0, 0, 0, 0.03);
-  background: var(--color-surface-white);
   resize: none;
-  outline: none;
-  font-size: var(--font-size-base);
-  font-family: var(--font-family);
-  color: var(--color-text-primary);
-  line-height: 1.5;
-  padding: var(--space-sm);
   margin: 0;
   transition: none;
   overflow: hidden;
@@ -1279,8 +1266,6 @@ export default {
 }
 
 .message-textarea::placeholder {
-  color: var(--color-text-muted);
-  font-size: var(--font-size-base);
   opacity: 0.7;
 }
 

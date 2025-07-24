@@ -121,21 +121,18 @@
   color: var(--color-primary);
 }
 
-/* Unordered lists - bullet points */
+/* Unordered lists - clean indentation without bullet points */
 .markdown-content ul > li {
   list-style: none;
   margin: 4px 0;
   position: relative;
   line-height: 1.6;
+  padding-left: var(--space-md);
 }
 
+/* Remove bullet points for cleaner dash-based lists */
 .markdown-content ul > li::before {
-  content: "• ";
-  font-weight: 600;
-  color: var(--color-primary);
-  position: absolute;
-  left: -18px;
-  top: 0;
+  content: "";
 }
 
 /* Ordered lists - no numbering, same as unordered */

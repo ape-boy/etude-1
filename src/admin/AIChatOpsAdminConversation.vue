@@ -7,7 +7,7 @@
         <p>사용자 대화 내역 및 운영 통계</p>
       </div>
       <div class="header-actions">
-        <button @click="refreshData" :disabled="isLoading" class="btn-refresh">
+        <button @click="refreshData" :disabled="isLoading" class="btn-system btn-system--primary btn-system--sm">
           <span v-if="isLoading">새로고침중...</span>
           <span v-else>새로고침</span>
         </button>
@@ -127,25 +127,25 @@
 
       <!-- 페이지네이션 -->
       <div v-if="conversationPage.totalPages > 1" class="pagination">
-        <button @click="goToPage(0)" :disabled="conversationPage.first" class="pagination-btn">
+        <button @click="goToPage(0)" :disabled="conversationPage.first" class="btn-system btn-system--ghost btn-system--sm">
           첫 페이지
         </button>
-        <button @click="goToPage(currentPage - 1)" :disabled="!conversationPage.hasPrevious" class="pagination-btn">
+        <button @click="goToPage(currentPage - 1)" :disabled="!conversationPage.hasPrevious" class="btn-system btn-system--ghost btn-system--sm">
           이전
         </button>
 
         <div class="page-numbers">
           <button v-for="page in visiblePages" :key="page" @click="goToPage(page)"
-            :class="['page-btn', { active: page === currentPage }]">
+            :class="['btn-system', 'btn-system--sm', page === currentPage ? 'btn-system--primary' : 'btn-system--ghost']">
             {{ page + 1 }}
           </button>
         </div>
 
-        <button @click="goToPage(currentPage + 1)" :disabled="!conversationPage.hasNext" class="pagination-btn">
+        <button @click="goToPage(currentPage + 1)" :disabled="!conversationPage.hasNext" class="btn-system btn-system--ghost btn-system--sm">
           다음
         </button>
         <button @click="goToPage(conversationPage.totalPages - 1)" :disabled="conversationPage.last"
-          class="pagination-btn">
+          class="btn-system btn-system--ghost btn-system--sm">
           마지막
         </button>
       </div>
@@ -598,58 +598,9 @@ export default {
   flex-shrink: 0;
 }
 
-.pagination-btn,
-.page-btn {
-  padding: 4px 8px;
-  border: 1px solid #d1d5db;
-  background: white;
-  color: #374151;
-  cursor: pointer;
-  border-radius: 4px;
-  font-size: 11px;
-  min-width: 32px;
-}
-
-.pagination-btn:hover:not(:disabled),
-.page-btn:hover {
-  background: #f3f4f6;
-}
-
-.pagination-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.page-btn.active {
-  background: #3b82f6;
-  color: white;
-  border-color: #3b82f6;
-}
-
 .page-numbers {
   display: flex;
   gap: 4px;
-}
-
-/* 버튼 스타일 */
-.btn-refresh {
-  padding: 6px 12px;
-  background: #3b82f6;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.btn-refresh:hover:not(:disabled) {
-  background: #2563eb;
-}
-
-.btn-refresh:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
 }
 
 /* 반응형 */

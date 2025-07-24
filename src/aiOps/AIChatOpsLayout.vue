@@ -10,14 +10,14 @@
 
     <div v-show="isOpen && isInitialized" class="ai-chatops-chat-window" :class="[windowClasses, currentTheme]"
       ref="chatWindow">
-      <div class="chat-header">
-        <div class="bot-info">
-          <div class="avatar">
+      <div class="chat-header flex-between p-md-lg">
+        <div class="bot-info flex-align-center gap-md">
+          <div class="avatar flex-center">
             <LucideIcon name="robot" fill="white" :width="26" :height="26" />
           </div>
           <div class="details">
-            <span class="name">{{ getText('aiChatOpsTitle') }}</span>
-            <div class="status" :class="{ offline: !isConnected }">
+            <span class="name color-header-text">{{ getText('aiChatOpsTitle') }}</span>
+            <div class="status color-header-secondary flex-align-center" :class="{ offline: !isConnected }">
               <span class="status-dot"></span>
               <span>{{ isConnected ? getText('online') : getText('offline') }}</span>
             </div>
@@ -28,8 +28,8 @@
           </button>
         </div>
 
-        <div class="actions">
-          <div class="easter-egg-trigger" @click="openRandomEasterEgg">
+        <div class="actions flex-align-center gap-sm">
+          <div class="easter-egg-trigger flex-center" @click="openRandomEasterEgg">
             <LucideIcon name="sparkles" fill="currentColor" :width="4" :height="4" />
           </div>
 
@@ -45,7 +45,7 @@
             <span>{{ currentLanguage === 'ko' ? 'KO' : 'EN' }}</span>
           </button>
 
-          <div class="window-controls">
+          <div class="window-controls flex-align-center">
             <button class="window-control-btn header-btn" @click="minimizeWindow">
               <LucideIcon name="minus" fill="currentColor" :width="12" :height="12" :interactive="true" />
             </button>
@@ -60,9 +60,9 @@
         </div>
       </div>
 
-      <div class="content">
-        <div v-show="currentView === 'categorySelect'" class="category-select">
-          <div class="welcome-section">
+      <div class="content flex-1 flex-column">
+        <div v-show="currentView === 'categorySelect'" class="category-select flex-column">
+          <div class="welcome-section p-lg-xl-md">
             <div class="welcome-icon">
               <LucideIcon name="heart" fill="var(--color-primary)" :width="28" :height="28" />
             </div>
@@ -72,19 +72,19 @@
             </div>
           </div>
 
-          <div class="category-container">
-            <div class="category-grid">
+          <div class="category-container flex-1 flex-column px-xl pb-lg">
+            <div class="category-grid flex-1 flex-column gap-md mb-lg">
               <div v-for="category in categories" :key="category.key" @click="selectCategory(category.key)"
-                class="category-card card-system card-system--interactive"
-                :class="{ disabled: chatProcessingCount > 0 }">
-                <div class="category-icon" :class="`category-icon--${category.key}`">
+                class="category-card card-base card-hover card-shadow flex-align-center gap-md p-md"
+                :class="{ 'card-disabled': chatProcessingCount > 0 }">
+                <div class="category-icon card-icon flex-center flex-shrink-0" :class="`category-icon--${category.key}`">
                   <LucideIcon :name="category.icon" fill="white" :width="20" :height="20" />
                 </div>
-                <div class="category-content">
-                  <h4>{{ getText(category.titleKey) }}</h4>
-                  <p>{{ getText(category.descKey) }}</p>
+                <div class="category-content flex-1 flex-column">
+                  <h4 class="text-primary">{{ getText(category.titleKey) }}</h4>
+                  <p class="text-secondary">{{ getText(category.descKey) }}</p>
                 </div>
-                <div class="category-arrow">
+                <div class="category-arrow card-arrow flex-align-center">
                   <LucideIcon name="chevron-right" fill="currentColor" :width="14" :height="14" />
                 </div>
               </div>
@@ -134,20 +134,20 @@
 
             <div v-show="!loadingPersonas && filteredPersonas.length > 0" class="persona-grid">
               <div v-for="(persona, index) in filteredPersonas" :key="persona.personaCode"
-                @click="selectPersona(persona)" class="persona-card card-system card-system--interactive"
-                :class="{ disabled: loadingPersonas }" data-testid="persona-card">
+                @click="selectPersona(persona)" class="persona-card card-base card-hover card-shadow"
+                :class="{ 'card-disabled': loadingPersonas }" data-testid="persona-card">
                 <div class="persona-card-content">
-                  <div class="persona-icon"
+                  <div class="persona-icon card-icon"
                     :style="{ backgroundColor: getPersonaColor(index, getPersonaDescription(persona)) }">
                     <LucideIcon :name="getPersonaIconName(persona)" fill="white" :width="20" :height="20" />
                   </div>
 
                   <div class="persona-info">
-                    <h4 class="persona-title">{{ persona.title || persona.personaCode }}</h4>
-                    <p class="persona-description">{{ getPersonaDescription(persona) }}</p>
+                    <h4 class="persona-title text-primary">{{ persona.title || persona.personaCode }}</h4>
+                    <p class="persona-description text-secondary">{{ getPersonaDescription(persona) }}</p>
                   </div>
 
-                  <div class="persona-arrow">
+                  <div class="persona-arrow card-arrow">
                     <LucideIcon name="chevron-right" fill="currentColor" :width="14" :height="14" />
                   </div>
                 </div>
@@ -667,10 +667,14 @@ export default {
       return aiChatOpsService.getPersonas()
         .then(response => {
           if (response.success) {
-            this.personas = response.data.data || response.data || [];
+            // Mock 서버는 response.data가 이미 배열
+            this.personas = Array.isArray(response.data) ? response.data : (response.data.data || response.data || []);
+            console.log('📋 Loaded personas:', this.personas.length, this.personas);
           }
         })
         .catch(error => {
+          console.error('❌ Failed to load personas:', error);
+          this.personas = [];
         })
         .finally(() => {
           this.loadingPersonas = false;
@@ -907,15 +911,12 @@ export default {
 
 .chat-header {
   background: var(--color-header-bg);
-  padding: var(--space-md) var(--space-lg);
   border-bottom: 1px solid var(--color-border-light);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   min-height: var(--layout-header-height);
   position: relative;
   z-index: 10;
 }
+
 
 .chat-header::after {
   content: '';
@@ -929,22 +930,19 @@ export default {
 }
 
 .bot-info {
-  display: flex;
-  align-items: center;
   gap: var(--space-md);
 }
+
 
 .avatar {
   width: 36px;
   height: 36px;
   background: var(--color-header-accent);
   border-radius: var(--radius-full);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   box-shadow: var(--shadow-soft);
   position: relative;
 }
+
 
 .avatar::before {
   content: '';
@@ -957,19 +955,16 @@ export default {
 .details .name {
   font-size: var(--font-size-base);
   font-weight: 500;
-  color: var(--color-header-text);
   margin-bottom: 2px;
   letter-spacing: -0.01em;
 }
 
 .status {
-  display: flex;
-  align-items: center;
   gap: 6px;
   font-size: var(--font-size-sm);
-  color: var(--color-header-text-secondary);
   font-weight: 400;
 }
+
 
 .status-dot {
   width: 6px;
@@ -987,10 +982,9 @@ export default {
 }
 
 .actions {
-  display: flex;
-  align-items: center;
   gap: var(--space-sm);
 }
+
 
 .easter-egg-trigger {
   opacity: 0.3;
@@ -998,14 +992,12 @@ export default {
   height: 1px;
   border-radius: 50%;
   background: var(--color-text-muted);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   cursor: pointer;
   border: none;
   box-shadow: none;
   position: relative;
 }
+
 
 .easter-egg-trigger:hover {
   opacity: 0.5;
@@ -1035,16 +1027,14 @@ export default {
 }
 
 .window-controls {
-  display: flex;
   gap: 4px;
 }
 
+
 .content {
-  flex: 1;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
 }
+
 
 /* 시스템 관리 모드에서 content가 전체 공간 사용 */
 .system-admin-mode .content {
@@ -1053,15 +1043,13 @@ export default {
 
 .category-select {
   height: 100%;
-  display: flex;
-  flex-direction: column;
   background: var(--color-surface-light);
   overflow: hidden;
 }
 
+
 .welcome-section {
   text-align: center;
-  padding: var(--space-lg) var(--space-xl) var(--space-md);
   flex-shrink: 0;
 }
 
@@ -1083,66 +1071,33 @@ export default {
 }
 
 .category-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  padding: 0 var(--space-xl) var(--space-lg);
   min-height: 0;
   overflow: hidden;
 }
 
+
 .category-grid {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-  margin-bottom: var(--space-lg);
   overflow-y: auto;
 }
+
 
 .category-grid .category-card:first-child {
   margin-top: 3px;
 }
 
 .category-card {
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
   min-height: 64px;
-  padding: var(--space-md);
-  cursor: pointer;
-  transition: all var(--motion-fast);
-  background: var(--color-card-bg);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-card-enhanced);
-  border: 1px solid var(--color-border-light);
-}
-
-.category-card:hover:not(.disabled) {
-  transform: translateY(-2px);
-  box-shadow:
-    0 4px 16px rgba(0, 0, 0, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
-}
-
-.category-card.disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  pointer-events: none;
 }
 
 .category-icon {
   width: 40px;
   height: 40px;
   border-radius: var(--radius-lg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
   position: relative;
   overflow: hidden;
   transition: transform var(--motion-fast);
 }
+
 
 .category-icon--personal {
   background: var(--color-primary);
@@ -1169,40 +1124,24 @@ export default {
 }
 
 .category-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
   gap: 2px;
 }
+
 
 .category-content h4 {
   font-size: var(--font-size-base);
   font-weight: 600;
-  color: var(--color-text-primary);
   margin: 0;
   line-height: 1.2;
 }
 
 .category-content p {
   font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
   margin: 0;
   line-height: 1.4;
 }
 
-.category-arrow {
-  color: var(--color-text-muted);
-  display: flex;
-  align-items: center;
-  transition: all var(--motion-fast);
-}
-
-.category-card:hover:not(.disabled) .category-arrow {
-  color: var(--color-primary);
-  transform: translateX(2px);
-}
-
+/* Category specific overrides (keep existing icon hover behavior) */
 .category-card:hover:not(.disabled) .category-icon {
   transform: scale(1.05);
 }
@@ -1221,6 +1160,7 @@ export default {
   background: var(--color-surface-light);
   overflow: hidden;
 }
+
 
 .persona-header {
   padding: var(--space-lg) var(--space-xl) var(--space-md);
@@ -1246,6 +1186,7 @@ export default {
   box-shadow: var(--shadow-soft);
   background: var(--color-primary);
 }
+
 
 .header-content h3 {
   font-size: var(--font-size-lg);
@@ -1274,6 +1215,7 @@ export default {
   font-weight: 500;
 }
 
+
 .no-personas {
   display: flex;
   flex-direction: column;
@@ -1283,6 +1225,7 @@ export default {
   text-align: center;
   gap: var(--space-lg);
 }
+
 
 .no-personas h4 {
   font-size: var(--font-size-lg);
@@ -1310,25 +1253,6 @@ export default {
   min-height: 80px;
   max-height: 80px;
   padding: var(--space-md);
-  cursor: pointer;
-  transition: all var(--motion-fast);
-  background: var(--color-card-bg);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-card-enhanced);
-  border: 1px solid var(--color-border-light);
-}
-
-.persona-card:hover:not(.disabled) {
-  transform: translateY(-2px);
-  box-shadow:
-    0 4px 16px rgba(0, 0, 0, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.25);
-}
-
-.persona-card.disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  pointer-events: none;
 }
 
 .persona-card-content {
@@ -1337,6 +1261,7 @@ export default {
   gap: var(--space-md);
   height: 100%;
 }
+
 
 .persona-icon {
   width: 40px;
@@ -1351,6 +1276,7 @@ export default {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   transition: transform var(--motion-fast);
 }
+
 
 .persona-icon::before {
   content: '';
@@ -1369,10 +1295,10 @@ export default {
   min-width: 0;
 }
 
+
 .persona-title {
   font-size: var(--font-size-base);
   font-weight: 600;
-  color: var(--color-text-primary);
   margin: 0;
   line-height: 1.2;
   letter-spacing: -0.01em;
@@ -1380,7 +1306,6 @@ export default {
 
 .persona-description {
   font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
   margin: 0;
   line-height: 1.3;
 
@@ -1392,17 +1317,9 @@ export default {
   hyphens: auto;
 }
 
+/* Persona specific overrides (keep existing icon hover behavior) */
 .persona-arrow {
-  color: var(--color-text-muted);
-  display: flex;
-  align-items: center;
   flex-shrink: 0;
-  transition: all var(--motion-fast);
-}
-
-.persona-card:hover:not(.disabled) .persona-arrow {
-  color: var(--color-primary);
-  transform: translateX(2px);
 }
 
 .persona-card:hover:not(.disabled) .persona-icon {
@@ -1431,6 +1348,7 @@ export default {
   backface-visibility: hidden;
   will-change: transform;
 }
+
 
 .ai-chatops-chat-button .lucide-icon {
   color: var(--color-surface-white);
