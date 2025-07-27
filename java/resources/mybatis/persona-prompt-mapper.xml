@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssss.devportal.ai.admin.mapper.PersonaPromptMapper">
+
+    <!-- PersonaPromptEntity ResultMap -->
+    <resultMap id="personaPromptResultMap" type="com.ssss.devportal.ai.admin.entity.PersonaPromptEntity">
+        <id property="promptId" column="PROMPT_ID"/>
+        <result property="personaCode" column="PERSONA_CODE"/>
+        <result property="promptType" column="PROMPT_TYPE"/>
+        <result property="prompt" column="PROMPT"/>
+        <result property="createdDate" column="CREATED_DATE"/>
+    </resultMap>
+
+    <!-- 새 프롬프트 삽입 (히스토리 관리용) -->
+    <insert id="insertPersonaPrompt" parameterType="com.ssss.devportal.ai.admin.entity.PersonaPromptEntity" 
+            useGeneratedKeys="true" keyProperty="promptId">
+        INSERT INTO swp_chatops_persona_prompt (
+            PERSONA_CODE,
+            PROMPT_TYPE,
+            PROMPT,
+            CREATED_DATE
+        ) VALUES (
+            #{personaCode},
+            #{promptType},
+            #{prompt},
+            #{createdDate}
+        )
+    </insert>
+
+    <!-- 특정 페르소나의 최신 프롬프트 조회 -->
+    <select id="findLatestByPersonaCode" resultMap="personaPromptResultMap">
+        SELECT 
+            PROMPT_ID,
+            PERSONA_CODE,
+            PROMPT_TYPE,
+            PROMPT,
+            CREATED_DATE
+        FROM swp_chatops_persona_prompt
+        WHERE PERSONA_CODE = #{personaCode}
+          AND PROMPT_TYPE = #{promptType}
+        ORDER BY PROMPT_ID DESC
+        LIMIT 1
+    </select>
+
+    <!-- 모든 페르소나의 최신 프롬프트 목록 조회 -->
+    <select id="findAllLatestPrompts" resultMap="personaPromptResultMap">
+        SELECT 
+            p1.PROMPT_ID,
+            p1.PERSONA_CODE,
+            p1.PROMPT_TYPE,
+            p1.PROMPT,
+            p1.CREATED_DATE
+        FROM swp_chatops_persona_prompt p1
+        INNER JOIN (
+            SELECT 
+                PERSONA_CODE,
+                MAX(PROMPT_ID) as MAX_PROMPT_ID
+            FROM swp_chatops_persona_prompt
+            WHERE PROMPT_TYPE = #{promptType}
+            GROUP BY PERSONA_CODE
+        ) p2 ON p1.PERSONA_CODE = p2.PERSONA_CODE 
+             AND p1.PROMPT_ID = p2.MAX_PROMPT_ID
+        WHERE p1.PROMPT_TYPE = #{promptType}
+        ORDER BY p1.PERSONA_CODE
+    </select>
+
+    <!-- 페르소나 존재 여부 확인 -->
+    <select id="existsByPersonaCode" resultType="boolean">
+        SELECT COUNT(*) > 0
+        FROM swp_chatops_persona_prompt
+        WHERE PERSONA_CODE = #{personaCode}
+          AND PROMPT_TYPE = #{promptType}
+    </select>
+
+    <!-- 특정 페르소나의 프롬프트 히스토리 조회 -->
+    <select id="findHistoryByPersonaCode" resultMap="personaPromptResultMap">
+        SELECT 
+            PROMPT_ID,
+            PERSONA_CODE,
+            PROMPT_TYPE,
+            PROMPT,
+            CREATED_DATE
+        FROM swp_chatops_persona_prompt
+        WHERE PERSONA_CODE = #{personaCode}
+          AND PROMPT_TYPE = #{promptType}
+        ORDER BY PROMPT_ID DESC
+        <if test="limit != null and limit > 0">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <!-- 페르소나별 프롬프트 개수 조회 -->
+    <select id="countByPersonaCode" resultType="int">
+        SELECT COUNT(*)
+        FROM swp_chatops_persona_prompt
+        WHERE PERSONA_CODE = #{personaCode}
+          AND PROMPT_TYPE = #{promptType}
+    </select>
+
+    <!-- 전체 페르소나 코드 목록 조회 (중복 제거) -->
+    <select id="findAllPersonaCodes" resultType="string">
+        SELECT DISTINCT PERSONA_CODE
+        FROM swp_chatops_persona_prompt
+        WHERE PROMPT_TYPE = #{promptType}
+        ORDER BY PERSONA_CODE
+    </select>
+
+    <!-- 특정 기간 내 생성된 프롬프트 조회 -->
+    <select id="findByDateRange" resultMap="personaPromptResultMap">
+        SELECT 
+            PROMPT_ID,
+            PERSONA_CODE,
+            PROMPT_TYPE,
+            PROMPT,
+            CREATED_DATE
+        FROM swp_chatops_persona_prompt
+        WHERE PROMPT_TYPE = #{promptType}
+        <if test="startDate != null">
+            AND CREATED_DATE >= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND CREATED_DATE &lt;= #{endDate}
+        </if>
+        ORDER BY CREATED_DATE DESC
+    </select>
+
+    <!-- 페르소나 코드로 검색 (부분 일치) -->
+    <select id="searchByKeyword" resultMap="personaPromptResultMap">
+        SELECT 
+            p1.PROMPT_ID,
+            p1.PERSONA_CODE,
+            p1.PROMPT_TYPE,
+            p1.PROMPT,
+            p1.CREATED_DATE
+        FROM swp_chatops_persona_prompt p1
+        INNER JOIN (
+            SELECT 
+                PERSONA_CODE,
+                MAX(PROMPT_ID) as MAX_PROMPT_ID
+            FROM swp_chatops_persona_prompt
+            WHERE PROMPT_TYPE = #{promptType}
+              AND (PERSONA_CODE LIKE CONCAT('%', #{keyword}, '%')
+                   OR PROMPT LIKE CONCAT('%', #{keyword}, '%'))
+            GROUP BY PERSONA_CODE
+        ) p2 ON p1.PERSONA_CODE = p2.PERSONA_CODE 
+             AND p1.PROMPT_ID = p2.MAX_PROMPT_ID
+        WHERE p1.PROMPT_TYPE = #{promptType}
+        ORDER BY p1.PERSONA_CODE
+    </select>
+
+    <!-- 오래된 히스토리 정리 -->
+    <delete id="cleanupOldHistory">
+        DELETE FROM swp_chatops_persona_prompt
+        WHERE PERSONA_CODE = #{personaCode}
+          AND PROMPT_TYPE = #{promptType}
+          AND PROMPT_ID NOT IN (
+              SELECT PROMPT_ID FROM (
+                  SELECT PROMPT_ID
+                  FROM swp_chatops_persona_prompt
+                  WHERE PERSONA_CODE = #{personaCode}
+                    AND PROMPT_TYPE = #{promptType}
+                  ORDER BY PROMPT_ID DESC
+                  LIMIT #{keepCount}
+              ) AS latest_prompts
+          )
+    </delete>
+
+    <!-- 통계 및 모니터링용 쿼리들 -->
+    
+    <!-- 페르소나별 히스토리 개수 통계 -->
+    <select id="getPersonaHistoryStats" resultType="map">
+        SELECT 
+            PERSONA_CODE as personaCode,
+            COUNT(*) as historyCount,
+            MIN(CREATED_DATE) as firstCreated,
+            MAX(CREATED_DATE) as lastUpdated
+        FROM swp_chatops_persona_prompt
+        WHERE PROMPT_TYPE = 'PERSONA'
+        GROUP BY PERSONA_CODE
+        ORDER BY historyCount DESC
+    </select>
+
+    <!-- 일별 프롬프트 생성 통계 -->
+    <select id="getDailyCreationStats" resultType="map">
+        SELECT 
+            DATE(CREATED_DATE) as creationDate,
+            COUNT(*) as promptCount,
+            COUNT(DISTINCT PERSONA_CODE) as uniquePersonas
+        FROM swp_chatops_persona_prompt
+        WHERE PROMPT_TYPE = 'PERSONA'
+          AND CREATED_DATE >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+        GROUP BY DATE(CREATED_DATE)
+        ORDER BY creationDate DESC
+    </select>
+
+    <!-- 최근 활동 프롬프트 조회 -->
+    <select id="findRecentActivity" resultMap="personaPromptResultMap">
+        SELECT 
+            PROMPT_ID,
+            PERSONA_CODE,
+            PROMPT_TYPE,
+            PROMPT,
+            CREATED_DATE
+        FROM swp_chatops_persona_prompt
+        WHERE PROMPT_TYPE = 'PERSONA'
+          AND CREATED_DATE >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+        ORDER BY CREATED_DATE DESC
+        LIMIT 50
+    </select>
+
+</mapper>
