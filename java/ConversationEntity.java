@@ -56,7 +56,7 @@ public class ConversationEntity {
     private LocalDateTime createdDate;
 
     /**
-     * ConversationDto로 변환하는 메서드
+     * ConversationDto로 변환하는 메서드 - 단순화된 DTO 필드에 맞춤
      */
     public com.ssss.devportal.ai.admin.entity.ConvMgntDto.ConversationDto toConversationDto() {
         return com.ssss.devportal.ai.admin.entity.ConvMgntDto.ConversationDto.builder()
@@ -66,8 +66,8 @@ public class ConversationEntity {
                 .aiResponse(this.aiQuery)
                 .userId(this.creator)
                 .createdDate(this.createdDate)
-                .queryLength(this.userQuery != null ? this.userQuery.length() : 0)
-                .responseLength(this.aiQuery != null ? this.aiQuery.length() : 0)
+                .responseTime(null)  // 응답시간은 별도 계산 필요
+                .success(true)       // 기본값 true, 실제로는 에러 정보 기반으로 설정
                 .build();
     }
 }

@@ -19,9 +19,9 @@ public class LLMAnalysisService {
 
     private static final Logger logger = LoggerFactory.getLogger(LLMAnalysisService.class);
     
-    // LLMService는 이미 구현되어 있다고 가정
-    // @Autowired
-    // private LLMService llmService;
+    // Note: LLMService should be properly injected based on your existing implementation
+    // @Resource or @Autowired
+    // private YourLLMService llmService;
 
     /**
      * 대화 데이터를 기반으로 LLM 분석 수행
@@ -177,10 +177,11 @@ public class LLMAnalysisService {
      */
     private String callLLMService(String systemPrompt, String userPrompt) {
         try {
-            // 실제 구현에서는 다음과 같이 호출
-            // return llmService.LLMCallAsync("maverick", systemPrompt, userPrompt);
+            // TODO: Replace with actual LLM service call based on your implementation
+            // Example: return llmService.LLMCallAsync("model_name", systemPrompt, userPrompt);
             
-            // 임시 Mock 응답 (실제로는 위 코드로 교체)
+            // For now, use mock response for development/testing
+            logger.warn("Using mock LLM response - replace with actual service call");
             return generateMockAnalysisResult(userPrompt);
             
         } catch (Exception e) {

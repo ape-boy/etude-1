@@ -24,8 +24,7 @@
           <div class="loading-spinner"></div>
           <span>통계를 불러오는 중...</span>
         </div>
-        <div v-else-if="statsSummary" class="stats-text">
-          {{ statsSummary }}
+        <div v-else-if="statsSummary" class="stats-text" v-html="formattedStatsSummary">
         </div>
         <div v-else class="no-stats">
           통계 데이터가 없습니다.
@@ -207,6 +206,13 @@ export default {
       }
 
       return pages;
+    },
+
+    formattedStatsSummary() {
+      if (!this.statsSummary) return '';
+      
+      // Format LLM-generated text for better display
+      return this.formatMarkdownToHtml(this.statsSummary);
     }
   },
 
@@ -324,6 +330,44 @@ export default {
 
     showError(message) {
       alert('❌ ' + message);
+    },
+
+    formatMarkdownToHtml(text) {
+      if (!text) return '';
+      
+      return text
+        // Headers
+        .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+        .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+        .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+        
+        // Bold and italic
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g, '<em>$1</em>')
+        
+        // Lists
+        .replace(/^- (.+)$/gm, '<li>$1</li>')
+        .replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>')
+        .replace(/^\d+\. (.+)$/gm, '<li>$1</li>')
+        
+        // Code blocks
+        .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
+        .replace(/`(.+?)`/g, '<code>$1</code>')
+        
+        // Line breaks
+        .replace(/\n\n/g, '</p><p>')
+        .replace(/\n/g, '<br>')
+        
+        // Wrap in paragraphs
+        .replace(/^(.+)$/gm, '<p>$1</p>')
+        
+        // Clean up
+        .replace(/<p><h([1-6])>/g, '<h$1>')
+        .replace(/<\/h([1-6])><\/p>/g, '</h$1>')
+        .replace(/<p><ul>/g, '<ul>')
+        .replace(/<\/ul><\/p>/g, '</ul>')
+        .replace(/<p><pre>/g, '<pre>')
+        .replace(/<\/pre><\/p>/g, '</pre>');
     }
   },
 
@@ -397,7 +441,45 @@ export default {
   border-radius: 6px;
   border: 1px solid #e2e8f0;
   width: 100%;
-  white-space: pre-wrap;
+}
+
+.stats-text h1, .stats-text h2, .stats-text h3 {
+  margin: 12px 0 8px 0;
+  color: #1f2937;
+}
+
+.stats-text h1 { font-size: 16px; }
+.stats-text h2 { font-size: 15px; }
+.stats-text h3 { font-size: 14px; }
+
+.stats-text ul {
+  margin: 8px 0;
+  padding-left: 20px;
+}
+
+.stats-text li {
+  margin: 2px 0;
+}
+
+.stats-text strong {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.stats-text code {
+  background: #e5e7eb;
+  padding: 1px 4px;
+  border-radius: 2px;
+  font-size: 12px;
+}
+
+.stats-text pre {
+  background: #e5e7eb;
+  padding: 8px;
+  border-radius: 4px;
+  overflow-x: auto;
+  font-size: 12px;
+  margin: 8px 0;
 }
 
 .no-stats {
