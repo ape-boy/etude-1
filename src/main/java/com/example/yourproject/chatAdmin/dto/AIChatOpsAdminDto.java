@@ -54,7 +54,7 @@ public class AIChatOpsAdminDto {
     // 기본 생성자
     public AIChatOpsAdminDto() {}
     
-    // 성공 응답 생성 메서드
+    // Success response factory method
     public static AIChatOpsAdminDto createSuccessResponse(Object data, String message) {
         AIChatOpsAdminDto dto = new AIChatOpsAdminDto();
         dto.success = true;
@@ -63,40 +63,12 @@ public class AIChatOpsAdminDto {
         return dto;
     }
     
-    // 리스트 데이터용 성공 응답 생성 메서드
-    public static AIChatOpsAdminDto createSuccessResponse(List<?> dataList, String message) {
-        AIChatOpsAdminDto dto = new AIChatOpsAdminDto();
-        dto.success = true;
-        dto.data = dataList;
-        dto.message = message;
-        return dto;
-    }
-    
-    // 단일 객체용 성공 응답 생성 메서드
-    public static AIChatOpsAdminDto createSuccessResponse(AIChatOpsAdminDto singleData, String message) {
-        AIChatOpsAdminDto dto = new AIChatOpsAdminDto();
-        dto.success = true;
-        dto.data = singleData;
-        dto.message = message;
-        return dto;
-    }
-    
-    // 에러 응답 생성 메서드
+    // Error response factory method
     public static AIChatOpsAdminDto createErrorResponse(String errorMessage) {
         AIChatOpsAdminDto dto = new AIChatOpsAdminDto();
         dto.success = false;
         dto.errorMessage = errorMessage;
         dto.message = "Operation failed";
-        return dto;
-    }
-    
-    // 분석 결과용 성공 응답 생성 메서드
-    public static AIChatOpsAdminDto createAnalysisResponse(String analysisResult, String message) {
-        AIChatOpsAdminDto dto = new AIChatOpsAdminDto();
-        dto.success = true;
-        dto.data = analysisResult;
-        dto.analysisResult = analysisResult;
-        dto.message = message;
         return dto;
     }
     

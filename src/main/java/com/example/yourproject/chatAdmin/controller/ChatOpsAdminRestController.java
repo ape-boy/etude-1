@@ -143,7 +143,7 @@ public class ChatOpsAdminRestController {
             @RequestParam(defaultValue = "all") String period) {
         try {
             String analysisResult = llmAnalysisService.analyzeConversations(personaCode, period);
-            AIChatOpsAdminDto response = AIChatOpsAdminDto.createAnalysisResponse(analysisResult,
+            AIChatOpsAdminDto response = AIChatOpsAdminDto.createSuccessResponse(analysisResult,
                     "Conversation analysis completed successfully");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -198,7 +198,7 @@ public class ChatOpsAdminRestController {
             String period = analysisRequest.getPeriod() != null ? analysisRequest.getPeriod() : "30days";
 
             String analysisResult = llmAnalysisService.analyzeConversations(personaCode, period);
-            AIChatOpsAdminDto response = AIChatOpsAdminDto.createAnalysisResponse(analysisResult,
+            AIChatOpsAdminDto response = AIChatOpsAdminDto.createSuccessResponse(analysisResult,
                     "Conversation analysis completed");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -214,7 +214,7 @@ public class ChatOpsAdminRestController {
             @RequestParam(defaultValue = "30days") String period) {
         try {
             String analysisResult = llmAnalysisService.analyzePersonaPerformance(personaCode, period);
-            AIChatOpsAdminDto response = AIChatOpsAdminDto.createAnalysisResponse(analysisResult,
+            AIChatOpsAdminDto response = AIChatOpsAdminDto.createSuccessResponse(analysisResult,
                     "Persona performance analysis completed");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -229,7 +229,7 @@ public class ChatOpsAdminRestController {
             @RequestParam(defaultValue = "30days") String period) {
         try {
             String recommendations = llmAnalysisService.generateUsageRecommendations(period);
-            AIChatOpsAdminDto response = AIChatOpsAdminDto.createAnalysisResponse(recommendations,
+            AIChatOpsAdminDto response = AIChatOpsAdminDto.createSuccessResponse(recommendations,
                     "Usage recommendations generated");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
