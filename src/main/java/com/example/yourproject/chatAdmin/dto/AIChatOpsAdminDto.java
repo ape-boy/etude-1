@@ -6,19 +6,21 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import lombok.Data;
 
 /**
  * AI ChatOps Admin DTO - Integrated data transfer object
  * Uses createSuccessResponse/createErrorResponse pattern
  */
+
+@Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AIChatOpsAdminDto {
-    
     private boolean success;
     private Object data;
     private String message;
     private String errorMessage;
-    
+
     // Persona fields
     private String personaId;
     private String personaCode;
@@ -28,16 +30,16 @@ public class AIChatOpsAdminDto {
     private String category;
     private String iconPath;
     private String welcomeMsg;
-    
+
     // Prompt fields
     private String promptType;
     private String personaPrompt;
-    
+
     // Conversation fields
     private String userQuery;
     private String aiQuery;
     private String creator;
-    
+
     // Analysis fields
     private String analysisResult;
     private String analysisType;
@@ -46,14 +48,15 @@ public class AIChatOpsAdminDto {
     private Integer uniqueUsers;
     private Double avgResponseTime;
     private Double successRate;
-    
+
     // Common fields
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdDate;
-    
+
     // 기본 생성자
-    public AIChatOpsAdminDto() {}
-    
+    public AIChatOpsAdminDto() {
+    }
+
     // Success response factory method
     public static AIChatOpsAdminDto createSuccessResponse(Object data, String message) {
         AIChatOpsAdminDto dto = new AIChatOpsAdminDto();
@@ -62,7 +65,7 @@ public class AIChatOpsAdminDto {
         dto.message = message;
         return dto;
     }
-    
+
     // Error response factory method
     public static AIChatOpsAdminDto createErrorResponse(String errorMessage) {
         AIChatOpsAdminDto dto = new AIChatOpsAdminDto();
@@ -71,208 +74,7 @@ public class AIChatOpsAdminDto {
         dto.message = "Operation failed";
         return dto;
     }
-    
-    // Getter/Setter methods
-    public boolean isSuccess() {
-        return success;
-    }
-    
-    public void setSuccess(boolean success) {
-        this.success = success;
-    }
-    
-    public Object getData() {
-        return data;
-    }
-    
-    public void setData(Object data) {
-        this.data = data;
-    }
-    
-    public String getMessage() {
-        return message;
-    }
-    
-    public void setMessage(String message) {
-        this.message = message;
-    }
-    
-    public String getErrorMessage() {
-        return errorMessage;
-    }
-    
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
-    }
-    
-    public String getPersonaId() {
-        return personaId;
-    }
-    
-    public void setPersonaId(String personaId) {
-        this.personaId = personaId;
-    }
-    
-    public String getPersonaCode() {
-        return personaCode;
-    }
-    
-    public void setPersonaCode(String personaCode) {
-        this.personaCode = personaCode;
-    }
-    
-    public String getTitle() {
-        return title;
-    }
-    
-    public void setTitle(String title) {
-        this.title = title;
-    }
-    
-    public String getDescription() {
-        return description;
-    }
-    
-    public void setDescription(String description) {
-        this.description = description;
-    }
-    
-    public String getDescriptionEn() {
-        return descriptionEn;
-    }
-    
-    public void setDescriptionEn(String descriptionEn) {
-        this.descriptionEn = descriptionEn;
-    }
-    
-    public String getCategory() {
-        return category;
-    }
-    
-    public void setCategory(String category) {
-        this.category = category;
-    }
-    
-    public String getIconPath() {
-        return iconPath;
-    }
-    
-    public void setIconPath(String iconPath) {
-        this.iconPath = iconPath;
-    }
-    
-    public String getWelcomeMsg() {
-        return welcomeMsg;
-    }
-    
-    public void setWelcomeMsg(String welcomeMsg) {
-        this.welcomeMsg = welcomeMsg;
-    }
-    
-    public String getPromptType() {
-        return promptType;
-    }
-    
-    public void setPromptType(String promptType) {
-        this.promptType = promptType;
-    }
-    
-    public String getPersonaPrompt() {
-        return personaPrompt;
-    }
-    
-    public void setPersonaPrompt(String personaPrompt) {
-        this.personaPrompt = personaPrompt;
-    }
-    
-    public String getUserQuery() {
-        return userQuery;
-    }
-    
-    public void setUserQuery(String userQuery) {
-        this.userQuery = userQuery;
-    }
-    
-    public String getAiQuery() {
-        return aiQuery;
-    }
-    
-    public void setAiQuery(String aiQuery) {
-        this.aiQuery = aiQuery;
-    }
-    
-    public String getCreator() {
-        return creator;
-    }
-    
-    public void setCreator(String creator) {
-        this.creator = creator;
-    }
-    
-    public String getAnalysisResult() {
-        return analysisResult;
-    }
-    
-    public void setAnalysisResult(String analysisResult) {
-        this.analysisResult = analysisResult;
-    }
-    
-    public String getAnalysisType() {
-        return analysisType;
-    }
-    
-    public void setAnalysisType(String analysisType) {
-        this.analysisType = analysisType;
-    }
-    
-    public String getPeriod() {
-        return period;
-    }
-    
-    public void setPeriod(String period) {
-        this.period = period;
-    }
-    
-    public Integer getTotalConversations() {
-        return totalConversations;
-    }
-    
-    public void setTotalConversations(Integer totalConversations) {
-        this.totalConversations = totalConversations;
-    }
-    
-    public Integer getUniqueUsers() {
-        return uniqueUsers;
-    }
-    
-    public void setUniqueUsers(Integer uniqueUsers) {
-        this.uniqueUsers = uniqueUsers;
-    }
-    
-    public Double getAvgResponseTime() {
-        return avgResponseTime;
-    }
-    
-    public void setAvgResponseTime(Double avgResponseTime) {
-        this.avgResponseTime = avgResponseTime;
-    }
-    
-    public Double getSuccessRate() {
-        return successRate;
-    }
-    
-    public void setSuccessRate(Double successRate) {
-        this.successRate = successRate;
-    }
-    
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
-    
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-    
+
     @Override
     public String toString() {
         return "AIChatOpsAdminDto{" +
