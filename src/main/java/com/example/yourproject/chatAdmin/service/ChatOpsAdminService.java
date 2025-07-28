@@ -12,10 +12,9 @@ import java.util.List;
 
 @Service
 public class ChatOpsAdminService {
-
     @Autowired
     private PersonaPromptMapper personaPromptMapper;
-    
+
     @Autowired
     private ConversationMapper conversationMapper;
 
@@ -32,7 +31,7 @@ public class ChatOpsAdminService {
         if (personaCode == null || personaCode.trim().isEmpty()) {
             throw new IllegalArgumentException("Persona code cannot be null or empty");
         }
-        
+
         try {
             AIChatOpsAdminDto persona = personaPromptMapper.selectPersonaByCode(personaCode);
             if (persona == null) {
@@ -49,7 +48,7 @@ public class ChatOpsAdminService {
         if (personaDto == null) {
             throw new IllegalArgumentException("Persona data cannot be null");
         }
-        
+
         if (personaDto.getPersonaCode() == null || personaDto.getPersonaCode().trim().isEmpty()) {
             throw new IllegalArgumentException("Persona code is required");
         }
@@ -65,7 +64,7 @@ public class ChatOpsAdminService {
             if (personaDto.getPromptType() == null) {
                 personaDto.setPromptType("system");
             }
-            
+
             if (personaDto.getPersonaPrompt() == null) {
                 personaDto.setPersonaPrompt("You are an AI assistant.");
             }
@@ -122,7 +121,7 @@ public class ChatOpsAdminService {
 
             // Delete related conversations first
             conversationMapper.deleteConversationsByPersonaCode(personaCode);
-            
+
             // Delete persona
             int result = personaPromptMapper.deletePersona(personaCode);
             return result > 0;
@@ -135,7 +134,7 @@ public class ChatOpsAdminService {
     public List<AIChatOpsAdminDto> getConversationsWithPaging(
             String personaCode, String creator, LocalDateTime startDate, LocalDateTime endDate,
             int page, int size) {
-        
+
         if (page < 0 || size <= 0) {
             throw new IllegalArgumentException("Invalid pagination parameters");
         }
@@ -143,14 +142,14 @@ public class ChatOpsAdminService {
         try {
             int offset = page * size;
             return conversationMapper.selectConversationsWithPaging(
-                personaCode, creator, startDate, endDate, offset, size);
+                    personaCode, creator, startDate, endDate, offset, size);
         } catch (Exception e) {
             throw new RuntimeException("Failed to fetch conversations with paging: " + e.getMessage(), e);
         }
     }
 
-    public int getConversationCount(String personaCode, String creator, 
-                                   LocalDateTime startDate, LocalDateTime endDate) {
+    public int getConversationCount(String personaCode, String creator,
+            LocalDateTime startDate, LocalDateTime endDate) {
         try {
             return conversationMapper.countConversations(personaCode, creator, startDate, endDate);
         } catch (Exception e) {

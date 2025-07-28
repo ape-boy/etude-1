@@ -13,7 +13,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin")
 public class ChatOpsAdminRestController {
-
     @Autowired
     private ChatOpsAdminService chatOpsAdminService;
 

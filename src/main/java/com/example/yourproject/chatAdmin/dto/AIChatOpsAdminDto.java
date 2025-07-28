@@ -100,42 +100,7 @@ public class AIChatOpsAdminDto {
         return dto;
     }
     
-    // Builder 패턴을 위한 메서드들
-    public static AIChatOpsAdminDto createPersona() {
-        return new AIChatOpsAdminDto();
-    }
-    
-    public AIChatOpsAdminDto personaCode(String personaCode) {
-        this.personaCode = personaCode;
-        return this;
-    }
-    
-    public AIChatOpsAdminDto title(String title) {
-        this.title = title;
-        return this;
-    }
-    
-    public AIChatOpsAdminDto description(String description) {
-        this.description = description;
-        return this;
-    }
-    
-    public AIChatOpsAdminDto category(String category) {
-        this.category = category;
-        return this;
-    }
-    
-    public AIChatOpsAdminDto promptType(String promptType) {
-        this.promptType = promptType;
-        return this;
-    }
-    
-    public AIChatOpsAdminDto personaPrompt(String personaPrompt) {
-        this.personaPrompt = personaPrompt;
-        return this;
-    }
-    
-    // Getter/Setter 메서드들
+    // Getter/Setter methods
     public boolean isSuccess() {
         return success;
     }
