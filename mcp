@@ -1,0 +1,125 @@
+  현재 CLI 도구들의 내장 기능
+
+  Claude Code 내장 기능:
+  - Memory management (CLAUDE.md, conversation context)
+  - Sequential thinking (extended thinking mode)
+  - File system operations (Read, Write, Edit, MultiEdit)
+  - Search capabilities (Grep, Glob)
+  - Task management (TodoWrite)
+
+  Cursor/기타 도구들:
+  - Context awareness
+  - File indexing
+  - Code understanding
+  - Real-time collaboration
+
+  MCP가 여전히 유용한 이유
+
+  1. 전문화된 도메인 지식
+
+  Context7:
+    - 최신 라이브러리 문서 (실시간 업데이트)
+    - 프레임워크별 베스트 프랙티스
+    - 버전별 호환성 정보
+
+  Magic:
+    - 현대적 UI 컴포넌트 패턴
+    - 디자인 시스템 통합
+    - 접근성 표준 준수
+
+  2. 외부 시스템 통합
+
+  - Playwright: 실제 브라우저 자동화, E2E 테스트
+  - Database connections: 실시간 데이터 쿼리
+  - API integrations: 외부 서비스 연동
+
+  3. 확장성과 커스터마이징
+
+  // 내장 기능은 고정된 반면, MCP는 확장 가능
+  custom_mcp_server: {
+    domain_specific_knowledge: "회사 내부 표준, 레거시 시스템",
+    real_time_data: "실시간 메트릭, 모니터링 데이터",
+    specialized_tools: "업계별 특화 도구들"
+  }
+
+  4. 성능과 전문성
+
+  - Sequential: 복잡한 다단계 분석에 특화된 추론 엔진
+  - Context7: 문서 검색에 최적화된 인덱싱과 검색
+  - 내장 기능보다 특정 작업에서 더 나은 성능
+
+  실제 사용 시나리오
+
+  MCP가 더 유용한 경우:
+
+  # 복잡한 아키텍처 분석
+  /analyze --seq --c7 --ultrathink
+  # → Sequential의 구조화된 분석 + Context7의 패턴 매칭
+
+  # 최신 프레임워크 구현
+  /implement --magic --c7
+  # → Magic의 현대적 컴포넌트 + Context7의 최신 문서
+
+  # 종합적 E2E 테스트
+  /test --play --seq
+  # → Playwright 실제 브라우저 + Sequential 테스트 전략
+
+  내장 기능이 충분한 경우:
+
+  # 단순 파일 편집
+  /edit file.js
+
+  # 기본적인 코드 리팩토링
+  /improve --quality
+
+  # 일반적인 문서 작성
+  /document README.md
+
+  결론
+
+  MCP는 여전히 유용하지만, 선택적으로 사용해야 합니다:
+
+  1. 기본 작업: 내장 기능으로 충분
+  2. 전문 작업: MCP 서버의 특화된 기능 활용
+  3. 복합 작업: 내장 + MCP 조합으로 최적화
+
+  권장 접근법:
+  - 먼저 내장 기능으로 시도
+  - 한계에 부딪히면 해당 도메인의 MCP 서버 활용
+  - 복잡한 워크플로우에서는 하이브리드 접근
+
+  MCP의 진정한 가치는 "범용성"이 아닌 "전문성"에 있습니다.
+
+> mcp 활용을 내가 명시해야하는거야? 너가 직접 못해?
+
+● 아니요, 제가 자동으로 판단해서 MCP를 활용할 수 있습니다!
+
+  자동 활용 방식
+
+  컨텍스트 기반 자동 활성화:
+  자동_감지:
+    - 외부 라이브러리 import 감지 → Context7 자동 활성화  
+    - UI 컴포넌트 요청 → Magic 자동 활성화
+    - 복잡한 분석 요청 → Sequential 자동 활성화
+    - 테스트 관련 작업 → Playwright 자동 활성화
+
+  실제 예시:
+  // 이런 요청이 오면
+  "React 컴포넌트 만들어줘"
+  → 자동으로 Magic + Context7 활성화
+
+  // 이런 요청이 오면  
+  "성능 문제 분석해줘"
+  → 자동으로 Sequential + Playwright 활성화
+
+  // 이런 요청이 오면
+  "Next.js 13 앱라우터 사용법 알려줘"
+  → 자동으로 Context7 활성화
+
+  명시적 제어도 가능
+
+  필요하다면 플래그로 직접 제어할 수도 있어요:
+  --c7        # Context7 강제 활성화
+  --seq       # Sequential 강제 활성화  
+  --magic     # Magic 강제 활성화
+  --no-mcp    # MCP 완전 비활성화
