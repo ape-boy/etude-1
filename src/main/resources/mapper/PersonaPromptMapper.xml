@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.yourproject.chatAdmin.mapper.PersonaPromptMapper">
+
+    <!-- Result map for persona prompt -->
+    <resultMap id="PersonaPromptResultMap" type="com.example.yourproject.chatAdmin.dto.AIChatOpsAdminDto">
+        <result property="personaId" column="persona_id" />
+        <result property="personaCode" column="persona_code" />
+        <result property="promptType" column="prompt_type" />
+        <result property="personaPrompt" column="persona_prompt" />
+        <result property="createdDate" column="created_date" />
+        <!-- Additional persona fields mapping -->
+        <result property="title" column="title" />
+        <result property="description" column="description" />
+        <result property="descriptionEn" column="description_en" />
+        <result property="category" column="category" />
+        <result property="iconPath" column="icon_path" />
+        <result property="welcomeMsg" column="welcome_msg" />
+    </resultMap>
+
+    <!-- Get all personas with prompts -->
+    <select id="selectAllPersonasWithPrompts" resultMap="PersonaPromptResultMap">
+        SELECT 
+            persona_id,
+            persona_code,
+            prompt_type,
+            persona_prompt,
+            created_date,
+            -- 페르소나 기본 정보는 프롬프트에서 파싱되거나 별도 테이블에서 조인
+            persona_code as title,
+            'AI Assistant' as description,
+            'AI Assistant' as description_en,
+            CASE 
+                WHEN persona_code LIKE '%personal%' THEN 'personal'
+                WHEN persona_code LIKE '%general%' THEN 'general'
+                WHEN persona_code LIKE '%operation%' THEN 'operation'
+                ELSE 'general'
+            END as category,
+            NULL as icon_path,
+            CONCAT('Hello, I am ', persona_code, '.') as welcome_msg
+        FROM swp_ai_chatops_persona_prompt
+        ORDER BY created_date DESC
+    </select>
+
+    <!-- 특정 페르소나 코드로 조회 -->
+    <select id="selectPersonaByCode" resultMap="PersonaPromptResultMap">
+        SELECT 
+            persona_id,
+            persona_code,
+            prompt_type,
+            persona_prompt,
+            created_date,
+            persona_code as title,
+            'AI Assistant' as description,
+            'AI Assistant' as description_en,
+            CASE 
+                WHEN persona_code LIKE '%personal%' THEN 'personal'
+                WHEN persona_code LIKE '%general%' THEN 'general'
+                WHEN persona_code LIKE '%operation%' THEN 'operation'
+                ELSE 'general'
+            END as category,
+            NULL as icon_path,
+            CONCAT('Hello, I am ', persona_code, '.') as welcome_msg
+        FROM swp_ai_chatops_persona_prompt
+        WHERE persona_code = #{personaCode}
+        ORDER BY created_date DESC
+        LIMIT 1
+    </select>
+
+    <!-- Create persona -->
+    <insert id="insertPersona" parameterType="com.example.yourproject.chatAdmin.dto.AIChatOpsAdminDto">
+        INSERT INTO swp_ai_chatops_persona_prompt (
+            persona_code,
+            prompt_type,
+            persona_prompt,
+            created_date
+        ) VALUES (
+            #{personaCode},
+            #{promptType, jdbcType=VARCHAR},
+            #{personaPrompt, jdbcType=CLOB},
+            NOW()
+        )
+    </insert>
+
+    <!-- Update persona -->
+    <update id="updatePersona" parameterType="com.example.yourproject.chatAdmin.dto.AIChatOpsAdminDto">
+        UPDATE swp_ai_chatops_persona_prompt
+        SET 
+            persona_prompt = #{personaPrompt, jdbcType=CLOB},
+            prompt_type = #{promptType, jdbcType=VARCHAR}
+        WHERE persona_code = #{personaCode}
+    </update>
+
+    <!-- Delete persona -->
+    <delete id="deletePersona">
+        DELETE FROM swp_ai_chatops_persona_prompt
+        WHERE persona_code = #{personaCode}
+    </delete>
+
+    <!-- 프롬프트 타입별 조회 -->
+    <select id="selectPersonaPromptByTypeAndCode" resultMap="PersonaPromptResultMap">
+        SELECT 
+            persona_id,
+            persona_code,
+            prompt_type,
+            persona_prompt,
+            created_date
+        FROM swp_ai_chatops_persona_prompt
+        WHERE persona_code = #{personaCode}
+        AND prompt_type = #{promptType}
+        ORDER BY created_date DESC
+        LIMIT 1
+    </select>
+
+    <!-- 페르소나 프롬프트 업데이트 -->
+    <update id="updatePersonaPrompt">
+        UPDATE swp_ai_chatops_persona_prompt
+        SET 
+            persona_prompt = #{personaPrompt, jdbcType=CLOB}
+        WHERE persona_code = #{personaCode}
+        AND prompt_type = #{promptType}
+    </update>
+
+    <!-- 페르소나 코드 중복 체크 -->
+    <select id="countByPersonaCode" resultType="int">
+        SELECT COUNT(*)
+        FROM swp_ai_chatops_persona_prompt
+        WHERE persona_code = #{personaCode}
+    </select>
+
+    <!-- 카테고리별 페르소나 조회 -->
+    <select id="selectPersonasByCategory" resultMap="PersonaPromptResultMap">
+        SELECT 
+            persona_id,
+            persona_code,
+            prompt_type,
+            persona_prompt,
+            created_date,
+            persona_code as title,
+            'AI Assistant' as description,
+            'AI Assistant' as description_en,
+            #{category} as category,
+            NULL as icon_path,
+            CONCAT('Hello, I am ', persona_code, '.') as welcome_msg
+        FROM swp_ai_chatops_persona_prompt
+        WHERE (
+            (#{category} = 'personal' AND persona_code LIKE '%personal%') OR
+            (#{category} = 'general' AND persona_code LIKE '%general%') OR
+            (#{category} = 'operation' AND persona_code LIKE '%operation%') OR
+            (#{category} = 'all')
+        )
+        ORDER BY created_date DESC
+    </select>
+
+    <!-- 페이징 조회 -->
+    <select id="selectPersonasWithPaging" resultMap="PersonaPromptResultMap">
+        SELECT 
+            persona_id,
+            persona_code,
+            prompt_type,
+            persona_prompt,
+            created_date,
+            persona_code as title,
+            'AI Assistant' as description,
+            'AI Assistant' as description_en,
+            CASE 
+                WHEN persona_code LIKE '%personal%' THEN 'personal'
+                WHEN persona_code LIKE '%general%' THEN 'general'
+                WHEN persona_code LIKE '%operation%' THEN 'operation'
+                ELSE 'general'
+            END as category,
+            NULL as icon_path,
+            CONCAT('Hello, I am ', persona_code, '.') as welcome_msg
+        FROM swp_ai_chatops_persona_prompt
+        ORDER BY created_date DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- 전체 페르소나 개수 조회 -->
+    <select id="countAllPersonas" resultType="int">
+        SELECT COUNT(DISTINCT persona_code)
+        FROM swp_ai_chatops_persona_prompt
+    </select>
+
+</mapper>

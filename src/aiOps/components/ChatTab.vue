@@ -650,8 +650,20 @@ export default {
         };
       }
 
+      // AI 응답 메시지를 즉시 추가하고 스크롤 실행
+      this.messages.push(responseMessage);
+      
+      // 메시지 제한 확인
+      if (this.messages.length > this.maxSessionMessages) {
+        const excessCount = this.messages.length - this.maxSessionMessages;
+        const removeCount = Math.ceil(excessCount / 2) * 2;
+        this.messages.splice(0, removeCount);
+      }
 
-      this.addMessageWithLimit(responseMessage);
+      // 즉시 스크롤 실행 (renderingScheduled 상태와 무관하게)
+      this.$nextTick(() => {
+        this.scrollToBottomSmooth();
+      });
 
       if (this.lastApiCall) {
         this.lastApiCall.status = 'completed';
@@ -787,12 +799,18 @@ export default {
 
       this.$nextTick(() => {
         this.processBatchMessages();
-        this.renderingScheduled = false;
+        // renderingScheduled를 false로 설정하기 전에 스크롤 완료를 보장
+        this.$nextTick(() => {
+          this.renderingScheduled = false;
+        });
       });
     },
 
     processBatchMessages() {
-      if (this.pendingMessages.length === 0) return;
+      if (this.pendingMessages.length === 0) {
+        this.renderingScheduled = false;
+        return;
+      }
 
       this.messages.push(...this.pendingMessages);
 
@@ -804,6 +822,7 @@ export default {
 
       this.pendingMessages = [];
 
+      // 배치 처리 후 즉시 스크롤 실행
       this.$nextTick(() => {
         this.scrollToBottomSmooth();
       });
@@ -822,13 +841,7 @@ export default {
     },
 
     scrollToBottomSmooth() {
-      if (this.renderingScheduled) {
-        this.$nextTick(() => {
-          this.scrollToBottomSmooth();
-        });
-        return;
-      }
-
+      // renderingScheduled 상태에 관계없이 스크롤 실행
       this.$nextTick(() => {
         const container = this.$refs.messagesContainer;
         if (container) {

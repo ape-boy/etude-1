@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.yourproject.chatAdmin.mapper.ConversationMapper">
+
+    <!-- Result map for conversation -->
+    <resultMap id="ConversationResultMap" type="com.example.yourproject.chatAdmin.dto.AIChatOpsAdminDto">
+        <result property="personaCode" column="PERSONA_CODE" />
+        <result property="userQuery" column="USER_QUERY" />
+        <result property="aiQuery" column="AI_QUERY" />
+        <result property="creator" column="CREATOR" />
+        <result property="createdDate" column="CREATED_DATE" />
+        <!-- Statistics fields -->
+        <result property="totalConversations" column="total_conversations" />
+        <result property="uniqueUsers" column="unique_users" />
+        <result property="avgResponseTime" column="avg_response_time" />
+        <result property="successRate" column="success_rate" />
+    </resultMap>
+
+    <!-- Period condition SQL fragment -->
+    <sql id="periodCondition">
+        <choose>
+            <when test="period == 'today'">
+                AND DATE(CREATED_DATE) = CURDATE()
+            </when>
+            <when test="period == '7days'">
+                AND CREATED_DATE >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+            </when>
+            <when test="period == '30days'">
+                AND CREATED_DATE >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+            </when>
+            <when test="period == '90days'">
+                AND CREATED_DATE >= DATE_SUB(NOW(), INTERVAL 90 DAY)
+            </when>
+            <!-- No condition for 'all' -->
+        </choose>
+    </sql>
+
+    <!-- Get conversations for analysis -->
+    <select id="selectConversationsForAnalysis" resultMap="ConversationResultMap">
+        SELECT 
+            PERSONA_CODE,
+            USER_QUERY,
+            AI_QUERY,
+            CREATOR,
+            CREATED_DATE
+        FROM swp_ai_chatops_storage
+        WHERE 1=1
+        <if test="personaCode != null and personaCode != ''">
+            AND PERSONA_CODE = #{personaCode}
+        </if>
+        <include refid="periodCondition"/>
+        ORDER BY CREATED_DATE DESC
+        LIMIT 1000
+    </select>
+
+    <!-- Get conversations with paging -->
+    <select id="selectConversationsWithPaging" resultMap="ConversationResultMap">
+        SELECT 
+            PERSONA_CODE,
+            USER_QUERY,
+            AI_QUERY,
+            CREATOR,
+            CREATED_DATE
+        FROM swp_ai_chatops_storage
+        WHERE 1=1
+        <if test="personaCode != null and personaCode != ''">
+            AND PERSONA_CODE = #{personaCode}
+        </if>
+        <if test="creator != null and creator != ''">
+            AND CREATOR = #{creator}
+        </if>
+        <if test="startDate != null">
+            AND CREATED_DATE >= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND CREATED_DATE <= #{endDate}
+        </if>
+        ORDER BY CREATED_DATE DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- Count total conversations -->
+    <select id="countConversations" resultType="int">
+        SELECT COUNT(*)
+        FROM swp_ai_chatops_storage
+        WHERE 1=1
+        <if test="personaCode != null and personaCode != ''">
+            AND PERSONA_CODE = #{personaCode}
+        </if>
+        <if test="creator != null and creator != ''">
+            AND CREATOR = #{creator}
+        </if>
+        <if test="startDate != null">
+            AND CREATED_DATE >= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND CREATED_DATE <= #{endDate}
+        </if>
+    </select>
+
+    <!-- Delete conversations by persona code -->
+    <delete id="deleteConversationsByPersonaCode">
+        DELETE FROM swp_ai_chatops_storage
+        WHERE PERSONA_CODE = #{personaCode}
+    </delete>
+
+    <!-- Get conversation statistics by period -->
+    <select id="selectConversationStatistics" resultMap="ConversationResultMap">
+        SELECT 
+            COUNT(*) as total_conversations,
+            COUNT(DISTINCT CREATOR) as unique_users,
+            AVG(CHAR_LENGTH(AI_QUERY)) as avg_response_time,
+            ROUND(
+                (COUNT(CASE WHEN AI_QUERY IS NOT NULL AND AI_QUERY != '' THEN 1 END) * 100.0 / COUNT(*)), 
+                2
+            ) as success_rate
+        FROM swp_ai_chatops_storage
+        WHERE 1=1
+        <if test="personaCode != null and personaCode != ''">
+            AND PERSONA_CODE = #{personaCode}
+        </if>
+        <include refid="periodCondition"/>
+    </select>
+
+    <!-- Get conversation counts by persona -->
+    <select id="selectConversationCountsByPersona" resultMap="ConversationResultMap">
+        SELECT 
+            PERSONA_CODE,
+            COUNT(*) as total_conversations,
+            COUNT(DISTINCT CREATOR) as unique_users
+        FROM swp_ai_chatops_storage
+        WHERE 1=1
+        <include refid="periodCondition"/>
+        GROUP BY PERSONA_CODE
+        ORDER BY total_conversations DESC
+    </select>
+
+
+</mapper>

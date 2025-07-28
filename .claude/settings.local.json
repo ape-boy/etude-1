@@ -53,7 +53,8 @@
       "Bash(vsce package:*)",
       "Bash(code:*)",
       "Bash(pkill:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(git remote:*)"
     ],
     "deny": []
   }

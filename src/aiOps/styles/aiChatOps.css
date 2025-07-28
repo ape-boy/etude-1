@@ -479,6 +479,33 @@ body {
   transform: translateX(2px);
 }
 
+/* Additional clickable element cursor rules */
+.category-card,
+.persona-card,
+.quick-question-item,
+.persona-badge,
+.conversation-history-btn,
+.system-admin-btn,
+.theme-selector,
+.language-btn,
+.window-control-btn,
+.back-btn,
+.feedback-btn,
+.easter-egg-trigger,
+[role="button"],
+[onclick],
+[data-testid] {
+  cursor: pointer !important;
+}
+
+/* Ensure interactive elements maintain pointer cursor even when disabled styling is applied */
+.category-card:not(.card-disabled),
+.persona-card:not(.card-disabled),
+.quick-question-item:not(:disabled),
+.persona-badge:not(:disabled) {
+  cursor: pointer !important;
+}
+
 /* Card disabled state */
 .card-disabled {
   opacity: 0.6;
