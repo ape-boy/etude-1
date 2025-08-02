@@ -1,0 +1,36 @@
+{
+  "name": "@ai-chatops/admin",
+  "version": "1.0.0",
+  "description": "AI ChatOps Admin Service - Vue.js admin interface for persona and conversation management",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0 --port 3002",
+    "build": "vite build",
+    "preview": "vite preview --port 3002",
+    "serve": "vite preview --port 3002",
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:report": "playwright show-report",
+    "lint": "eslint src --ext .vue,.js,.ts",
+    "lint:fix": "eslint src --ext .vue,.js,.ts --fix"
+  },
+  "dependencies": {
+    "vue": "^3.3.4",
+    "vue-router": "^4.5.1",
+    "axios": "^1.6.0",
+    "lucide-vue-next": "^0.460.0",
+    "chart.js": "^4.2.1",
+    "vue-chartjs": "^5.2.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.2.3",
+    "@playwright/test": "^1.54.1",
+    "vite": "^4.4.5",
+    "eslint": "^8.45.0",
+    "eslint-plugin-vue": "^9.15.1"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}
