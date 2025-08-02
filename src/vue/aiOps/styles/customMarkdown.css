@@ -146,11 +146,12 @@
 .md-code-block {
   background: linear-gradient(200deg, var(--color-surface-elevated) 50%, var(--color-surface-medium) 100%);
   position: relative;
-  margin: 12px 0;
+  margin: 8px 0;
   border: 1px solid var(--color-border-medium);
   border-radius: var(--radius-sm);
   overflow: hidden;
   box-shadow: var(--shadow-gentle);
+  white-space: normal;
 }
 
 .md-code-block .code-header {
@@ -200,12 +201,13 @@
 .hljs-dark {
   background: #1e1e1e !important;
   color: #d4d4d4 !important;
-  padding: 16px;
+  padding: 12px;
   margin: 0;
   overflow-x: auto;
   font-family: 'SF Mono', Monaco, Consolas, 'Courier New', monospace;
   font-size: clamp(12px, 2vw, 13px);
-  line-height: 1.5;
+  line-height: 1.4;
+  white-space: normal;
 }
 
 /* Highlight.js dark theme colors */

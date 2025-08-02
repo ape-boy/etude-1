@@ -24,7 +24,6 @@ const utilService = {
     try {
       return this.getMarkdownRenderer().render(markdown);
     } catch (error) {
-      console.error('Markdown conversion error:', error);
       return markdown;
     }
   },

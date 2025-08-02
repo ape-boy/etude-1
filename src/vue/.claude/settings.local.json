@@ -10,7 +10,8 @@
       "Bash(npm uninstall:*)",
       "Bash(rm:*)",
       "Bash(npm run build:*)",
-      "Bash(npm run backend:serve:*)"
+      "Bash(npm run backend:serve:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": []
   }

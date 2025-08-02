@@ -669,11 +669,9 @@ export default {
           if (response.success) {
             // Mock 서버는 response.data가 이미 배열
             this.personas = Array.isArray(response.data) ? response.data : (response.data.data || response.data || []);
-            console.log('📋 Loaded personas:', this.personas.length, this.personas);
           }
         })
         .catch(error => {
-          console.error('❌ Failed to load personas:', error);
           this.personas = [];
         })
         .finally(() => {
