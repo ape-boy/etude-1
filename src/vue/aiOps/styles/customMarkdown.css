@@ -151,13 +151,14 @@
   padding-left: 24px;
   list-style-type: decimal;
   list-style-position: outside;
+  margin-left: 0;
 }
 
 .markdown-content ol > li {
   display: list-item;
   margin: 4px 0;
   padding-left: 8px;
-  margin-left: 16px;
+  margin-left: 0;
   line-height: 1.6;
 }
 
@@ -170,11 +171,12 @@
 .markdown-content ol ol {
   margin-top: 4px;
   list-style-type: decimal;
+  padding-left: 20px;
 }
 
 .markdown-content ol ol > li {
   padding-left: 8px;
-  margin-left: 24px;
+  margin-left: 0;
 }
 
 .markdown-content ol ol > li::marker {
