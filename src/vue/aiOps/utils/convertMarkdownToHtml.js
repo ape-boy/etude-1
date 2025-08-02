@@ -27,65 +27,84 @@ class convertMarkdownToHtml {
    * @private
    */
   _setupCustomRenderer() {
-    // Headers
+    // Headers with enhanced styling
     this.renderer.heading = (text, level) => {
       return `<h${level} class="markdown-h${level} markdown-heading">${text}</h${level}>`;
     };
 
-    // Paragraphs
+    // Paragraphs with proper spacing
     this.renderer.paragraph = (text) => {
+      // Avoid wrapping list items in paragraphs
+      if (text.includes('<li') || text.includes('</li>')) {
+        return text;
+      }
       return `<p class="markdown-paragraph">${text}</p>`;
     };
 
-    // Lists
+    // Enhanced Lists with proper CSS classes
     this.renderer.list = (body, ordered, start) => {
       const type = ordered ? 'ol' : 'ul';
       const startAttr = (ordered && start !== 1) ? ` start="${start}"` : '';
-      return `<${type} class="markdown-list"${startAttr}>${body}</${type}>`;
+      // Remove any paragraph wrapping from list items
+      const cleanBody = body.replace(/<p class="markdown-paragraph">([^<]*)<\/p>/g, '$1');
+      return `<${type} class="markdown-list"${startAttr}>${cleanBody}</${type}>`;
     };
 
-    this.renderer.listitem = (text) => {
-      return `<li class="markdown-list-item">${text}</li>`;
+    this.renderer.listitem = (text, task, checked) => {
+      // Clean up any unwanted paragraph wrapping
+      const cleanText = text.replace(/<p class="markdown-paragraph">([^<]*)<\/p>/g, '$1');
+      
+      // Handle task lists if present
+      if (task) {
+        const checkedAttr = checked ? ' checked' : '';
+        return `<li class="markdown-list-item markdown-task-item">
+          <input type="checkbox" disabled${checkedAttr}> ${cleanText}
+        </li>`;
+      }
+      
+      return `<li class="markdown-list-item">${cleanText}</li>`;
     };
 
-    // Code blocks
+    // Enhanced Code blocks with better styling
     this.renderer.code = (code, language) => {
       const lang = language || 'code';
       const escapedCode = this._escapeHtml(code);
       return `<div class="markdown-code-block">
         <div class="code-header">
           <span class="code-lang">${lang}</span>
-          <button class="copy-code-btn">Copy</button>
+          <button class="copy-code-btn" onclick="this.textContent='Copied!'; setTimeout(() => this.textContent='Copy', 2000); navigator.clipboard.writeText(\`${escapedCode.replace(/`/g, '\\`')}\`)">Copy</button>
         </div>
         <pre>${escapedCode}</pre>
       </div>`;
     };
 
-    // Inline code
+    // Enhanced Inline code with theme styling
     this.renderer.codespan = (text) => {
       return `<code class="markdown-inline-code">${text}</code>`;
     };
 
-    // Links
+    // Enhanced Links with hover effects
     this.renderer.link = (href, title, text) => {
       const titleAttr = title ? ` title="${title}"` : '';
       return `<a href="${href}" class="markdown-link" target="_blank" rel="noopener noreferrer"${titleAttr}>${text}</a>`;
     };
 
-    // Strong (bold)
+    // Enhanced Strong (bold) styling
     this.renderer.strong = (text) => {
       return `<strong class="markdown-strong">${text}</strong>`;
     };
 
-    // Emphasis (italic)
+    // Enhanced Emphasis (italic) styling  
     this.renderer.em = (text) => {
       return `<em class="markdown-em">${text}</em>`;
     };
 
-    // Blockquotes
+    // Enhanced Blockquotes with better formatting
     this.renderer.blockquote = (quote) => {
+      // Clean up any paragraph wrapping and apply blockquote styling
+      const cleanQuote = quote.replace(/<p class="markdown-paragraph">/g, '').replace(/<\/p>/g, '<br>');
       return `<blockquote class="markdown-blockquote">
-        <p class="markdown-blockquote-p">${quote.replace(/<\/?p>/g, '')}</p>
+        <p class="markdown-blockquote-p">${cleanQuote.replace(/<br>$/, '')}</p>
       </blockquote>`;
     };
 
