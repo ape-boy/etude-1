@@ -913,11 +913,26 @@ export default {
         const container = this.$refs.messagesContainer;
         if (container) {
           container.style.scrollBehavior = 'auto';
-          container.scrollTop = container.scrollHeight;
+          
+          // 초기 스크롤을 여러 번 시도하여 확실하게 하단으로 이동
+          const forceInitialScroll = (attempts = 0) => {
+            container.scrollTop = container.scrollHeight;
+            
+            if (attempts < 5) {
+              this.timerManager.safeSetTimeout(() => {
+                const isAtBottom = container.scrollTop >= container.scrollHeight - container.clientHeight - 10;
+                if (!isAtBottom) {
+                  forceInitialScroll(attempts + 1);
+                }
+              }, 100 * (attempts + 1));
+            }
+          };
+          
+          forceInitialScroll();
 
           this.timerManager.safeSetTimeout(() => {
             container.style.scrollBehavior = 'smooth';
-          }, 100);
+          }, 600);
         }
       });
     },
@@ -1100,6 +1115,11 @@ export default {
           });
           this.resizeObserver.observe(messagesContainer);
         }
+        
+        // 초기 진입 시 스크롤을 하단으로 이동
+        this.timerManager.safeSetTimeout(() => {
+          this.setInitialScrollPosition();
+        }, 200);
       }
     });
 
