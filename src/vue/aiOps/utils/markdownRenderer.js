@@ -20,18 +20,34 @@ class MarkdownRenderer {
   }
 
   /**
-   * Configure highlight.js with dark theme
+   * Configure highlight.js with dark theme and copy button
    */
   highlightCode(str, lang) {
+    const escapedCode = this.escapeHtml(str);
+    const language = lang || 'text';
+    
     if (lang && hljs.getLanguage(lang)) {
       try {
         const highlighted = hljs.highlight(str, { language: lang }).value;
-        return `<pre class="hljs hljs-dark"><code class="language-${lang}">${highlighted}</code></pre>`;
+        return `<div class="md-code-block">
+          <div class="code-header">
+            <span class="code-lang">${language}</span>
+            <button class="copy-code-btn" data-code="${escapedCode.replace(/"/g, '&quot;')}">Copy</button>
+          </div>
+          <pre class="hljs hljs-dark"><code class="language-${lang}">${highlighted}</code></pre>
+        </div>`;
       } catch (err) {
         console.warn('Highlighting failed:', err);
       }
     }
-    return `<pre class="hljs hljs-dark"><code>${this.escapeHtml(str)}</code></pre>`;
+    
+    return `<div class="md-code-block">
+      <div class="code-header">
+        <span class="code-lang">${language}</span>
+        <button class="copy-code-btn" data-code="${escapedCode.replace(/"/g, '&quot;')}">Copy</button>
+      </div>
+      <pre class="hljs hljs-dark"><code>${escapedCode}</code></pre>
+    </div>`;
   }
 
   /**

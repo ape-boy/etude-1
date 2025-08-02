@@ -1077,14 +1077,28 @@ export default {
     handleMessageContainerClick(event) {
       const button = event.target.closest('.copy-code-btn');
       if (button) {
-        const pre = button.closest('.markdown-code-block').querySelector('pre');
+        // Try both new and old class names for compatibility
+        const codeBlock = button.closest('.md-code-block') || button.closest('.markdown-code-block');
+        const pre = codeBlock?.querySelector('pre');
+        
         if (pre) {
-          navigator.clipboard.writeText(pre.innerText).then(() => {
+          // Use data attribute if available, otherwise fallback to text content
+          const codeText = button.dataset.code || pre.innerText;
+          
+          navigator.clipboard.writeText(codeText).then(() => {
+            const originalText = button.textContent;
             button.textContent = 'Copied!';
             button.classList.add('copied');
+            
+            this.timerManager.safeSetTimeout(() => {
+              button.textContent = originalText;
+              button.classList.remove('copied');
+            }, 2000);
+          }).catch((err) => {
+            console.error('Copy failed:', err);
+            button.textContent = 'Copy failed';
             this.timerManager.safeSetTimeout(() => {
               button.textContent = 'Copy';
-              button.classList.remove('copied');
             }, 2000);
           });
         }

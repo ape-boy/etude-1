@@ -142,19 +142,70 @@
   background: var(--color-surface-elevated);
 }
 
+/* Code blocks with header and copy button */
+.md-code-block {
+  background: linear-gradient(200deg, var(--color-surface-elevated) 50%, var(--color-surface-medium) 100%);
+  position: relative;
+  margin: 12px 0;
+  border: 1px solid var(--color-border-medium);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  box-shadow: var(--shadow-gentle);
+}
+
+.md-code-block .code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--color-surface-accent);
+  color: var(--color-text-muted);
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--color-border-light);
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.md-code-block .copy-code-btn {
+  background: var(--color-surface-medium);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border-medium);
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--motion-fast);
+  opacity: 0.7;
+}
+
+.md-code-block:hover .copy-code-btn {
+  opacity: 1;
+}
+
+.md-code-block .copy-code-btn:hover {
+  background: var(--color-surface-light);
+  color: var(--color-text-primary);
+  transform: translateY(-1px);
+}
+
+.md-code-block .copy-code-btn.copied {
+  background: var(--color-success);
+  color: white;
+  opacity: 1;
+}
+
 /* Code blocks with highlight.js dark theme */
 .hljs-dark {
   background: #1e1e1e !important;
   color: #d4d4d4 !important;
-  border-radius: var(--radius-sm);
   padding: 16px;
-  margin: 12px 0;
+  margin: 0;
   overflow-x: auto;
   font-family: 'SF Mono', Monaco, Consolas, 'Courier New', monospace;
   font-size: clamp(12px, 2vw, 13px);
   line-height: 1.5;
-  border: 1px solid var(--color-border-medium);
-  box-shadow: var(--shadow-gentle);
 }
 
 /* Highlight.js dark theme colors */
