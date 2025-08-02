@@ -1,56 +1,19 @@
-/* AIChatOps - Unified CSS Variable System */
+/* AIChatOps - Minimal Design System */
 
-/* Cursor definitions for AI Chat component */
+/* Base cursor system */
 .ai-chatops-chat {
   cursor: auto;
 }
 
+.ai-chatops-chat button,
+.ai-chatops-chat [role="button"],
+.ai-chatops-chat .btn-system {
+  cursor: pointer !important;
+}
+
 .ai-chatops-chat input,
-.ai-chatops-chat textarea,
-.ai-chatops-chat button,
-.ai-chatops-chat select,
-.ai-chatops-chat a,
-.ai-chatops-chat [tabindex] {
-  cursor: pointer;
-}
-
-.ai-chatops-chat input[type="text"],
-.ai-chatops-chat input[type="password"],
-.ai-chatops-chat input[type="email"],
 .ai-chatops-chat textarea {
-  cursor: text;
-}
-
-.ai-chatops-chat button,
-.ai-chatops-chat button:hover,
-.ai-chatops-chat a:hover,
-.ai-chatops-chat [onclick]:hover,
-.ai-chatops-chat [tabindex]:hover {
-  cursor: pointer !important;
-}
-
-/* Ensure all btn-system elements have pointer cursor */
-.ai-chatops-chat .btn-system,
-.ai-chatops-chat .btn-system:hover,
-.ai-chatops-chat .btn-system:focus,
-.ai-chatops-chat .btn-system:active {
-  cursor: pointer !important;
-}
-
-.ai-chatops-chat input[type="text"]:hover,
-.ai-chatops-chat input[type="password"]:hover,
-.ai-chatops-chat input[type="email"]:hover,
-.ai-chatops-chat input[type="search"]:hover,
-.ai-chatops-chat textarea:hover {
   cursor: text !important;
-}
-
-/* Cross-browser cursor enforcement */
-body {
-  -webkit-user-select: auto;
-  -moz-user-select: auto;
-  -ms-user-select: auto;
-  user-select: auto;
 }
 
 :root {
@@ -1062,13 +1025,7 @@ html {
   }
 }
 
-/* Legacy theme class compatibility */
-.theme-ai-chatops,
-.ai-chatops-chat {
-  /* Handled by dynamic theme system */
-}
-
-/* Utility classes */
+/* Essential utility classes */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -1081,57 +1038,11 @@ html {
   border: 0;
 }
 
-/* Flexbox Layout Utilities */
-.flex-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.flex-between {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.flex-start {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-}
-
-.flex-end {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-}
-
-.flex-column {
-  display: flex;
-  flex-direction: column;
-}
-
-.flex-column-center {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.flex-align-center {
-  display: flex;
-  align-items: center;
-}
-
-.flex-justify-center {
-  display: flex;
-  justify-content: center;
-}
-
-.flex-wrap {
-  display: flex;
-  flex-wrap: wrap;
-}
+/* Core flexbox utilities */
+.flex-center { display: flex; align-items: center; justify-content: center; }
+.flex-between { display: flex; align-items: center; justify-content: space-between; }
+.flex-column { display: flex; flex-direction: column; }
+.flex-align-center { display: flex; align-items: center; }
 
 .flex-1 {
   flex: 1;
@@ -1237,17 +1148,10 @@ html {
 .mr-lg { margin-right: var(--space-lg); }
 .mr-xl { margin-right: var(--space-xl); }
 
-.mx-xs { margin-left: var(--space-xs); margin-right: var(--space-xs); }
-.mx-sm { margin-left: var(--space-sm); margin-right: var(--space-sm); }
-.mx-md { margin-left: var(--space-md); margin-right: var(--space-md); }
-.mx-lg { margin-left: var(--space-lg); margin-right: var(--space-lg); }
-.mx-xl { margin-left: var(--space-xl); margin-right: var(--space-xl); }
-
-.my-xs { margin-top: var(--space-xs); margin-bottom: var(--space-xs); }
+/* Essential spacing utilities */
 .my-sm { margin-top: var(--space-sm); margin-bottom: var(--space-sm); }
 .my-md { margin-top: var(--space-md); margin-bottom: var(--space-md); }
 .my-lg { margin-top: var(--space-lg); margin-bottom: var(--space-lg); }
-.my-xl { margin-top: var(--space-xl); margin-bottom: var(--space-xl); }
 
 /* Card system */
 .card-system {
@@ -1267,50 +1171,12 @@ html {
   box-shadow: var(--shadow-soft);
 }
 
-/* Unified icon system */
+/* Icon system - simplified */
 .lucide-icon,
-.lucide-icon svg,
-[class*="lucide-"] {
-  font-family: var(--font-family) !important;
-  display: inline-flex !important;
-  vertical-align: middle !important;
-  overflow: visible !important;
-  shape-rendering: geometricPrecision !important;
-  text-rendering: optimizeLegibility !important;
-  transform: translateZ(0) !important;
-  backface-visibility: hidden !important;
-  will-change: transform !important;
-}
-
-/* Icon fallback prevention */
-svg {
-  font-family: inherit !important;
-  -webkit-font-feature-settings: normal !important;
-  font-feature-settings: normal !important;
-  stroke-width: 2 !important;
-  fill: none !important;
-  stroke: currentColor !important;
-}
-
-/* Icon stability during theme changes */
-.lucide-icon svg path,
-.lucide-icon svg polyline,
-.lucide-icon svg polygon,
-.lucide-icon svg line,
-.lucide-icon svg circle,
-.lucide-icon svg rect {
-  stroke-width: inherit !important;
-  fill: inherit !important;
-  stroke: inherit !important;
-}
-
-/* Star rating system special handling */
-.star-rating__star svg {
-  stroke: #F59E0B !important;
-  fill: none !important;
-}
-
-.star-rating__star--active svg {
-  fill: #F59E0B !important;
-  stroke: #F59E0B !important;
+.lucide-icon svg {
+  display: inline-flex;
+  vertical-align: middle;
+  stroke-width: 2;
+  fill: none;
+  stroke: currentColor;
 }

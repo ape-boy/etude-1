@@ -313,7 +313,7 @@ export default {
     },
 
     // Format welcome message for display
-    async formatWelcomeMessage() {
+    formatWelcomeMessage() {
       const message = this.getPersonaWelcomeMessage(this.selectedPersona);
       if (!message) {
         this.formattedWelcomeMessage = '';
@@ -321,7 +321,7 @@ export default {
       }
 
       try {
-        this.formattedWelcomeMessage = await aiChatOpsService.formatContentMarkdown(message);
+        this.formattedWelcomeMessage = aiChatOpsService.formatContentMarkdown(message);
       } catch (error) {
         this.formattedWelcomeMessage = message;
       }

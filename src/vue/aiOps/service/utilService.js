@@ -1,34 +1,30 @@
-// Utility service consolidating all non-API utility functions
-// Combines functions from aiChatOpsService.js and convertMarkdownToHtml.js
+// Modern Utility Service with markdown-it integration
+// Streamlined and optimized for AI ChatOps
 
-import convertMarkdownToHtml from '../utils/convertMarkdownToHtml.js';
+import MarkdownRenderer from '../utils/markdownRenderer.js';
 
-let markdownConverter = null;
+let markdownRenderer = null;
 
 const utilService = {
   // ============================================
-  // Markdown Conversion Functions
+  // Modern Markdown Functions
   // ============================================
 
-  async loadMarkdownConverter() {
-    if (!markdownConverter) {
-      try {
-        markdownConverter = new convertMarkdownToHtml();
-      } catch (error) {
-        throw error;
-      }
+  getMarkdownRenderer() {
+    if (!markdownRenderer) {
+      markdownRenderer = MarkdownRenderer.create();
     }
-    return markdownConverter;
+    return markdownRenderer;
   },
 
-  // Convert markdown to HTML
-  async markdownToHtml(markdown) {
+  // Convert markdown to HTML using markdown-it
+  markdownToHtml(markdown) {
     if (!markdown || typeof markdown !== 'string') return markdown;
     
     try {
-      const converter = await this.loadMarkdownConverter();
-      return converter.convert(markdown);
+      return this.getMarkdownRenderer().render(markdown);
     } catch (error) {
+      console.error('Markdown conversion error:', error);
       return markdown;
     }
   },
@@ -41,31 +37,19 @@ const utilService = {
   isMarkdown(content) {
     if (!content || typeof content !== 'string') return false;
     
-    console.log('isMarkdown check:', {
-      content: content.substring(0, 100),
-      hasHeaders: /^#{1,6}\s+.+$/m.test(content),
-      hasBold: /\*\*.+?\*\*/.test(content),
-      hasItalic: /\*.+?\*/.test(content),
-      hasCode: /`.+?`/.test(content)
-    });
-    
-    const markdownPatterns = [
-      /^#{1,6}\s+.+$/m,
-      /^\*\s+.+$/m,
-      /^-\s+.+$/m,
-      /^\d+\.\s+.+$/m,
-      /\*\*.+?\*\*/,
-      /\*.+?\*/,
-      /`.+?`/,
-      /```[\s\S]*?```/,
-      /^\>.+$/m,
-      /\[.+?\]\(.+?\)/,
-      /!\[.*?\]\(.+?\)/
+    // Common markdown patterns
+    const patterns = [
+      /^#{1,6}\s/m,           // Headers
+      /^\d+\.\s/m,            // Ordered lists  
+      /^[\*\+\-]\s/m,         // Unordered lists
+      /\*\*.+?\*\*/,          // Bold
+      /`.+?`/,                // Inline code
+      /```/,                  // Code blocks
+      /^\>/m,                 // Blockquotes
+      /\[.+?\]\(.+?\)/        // Links
     ];
     
-    const result = markdownPatterns.some(pattern => pattern.test(content));
-    console.log('isMarkdown result:', result);
-    return result;
+    return patterns.some(pattern => pattern.test(content));
   },
 
   // Detect content type (html, markdown, or plain)
@@ -86,30 +70,18 @@ const utilService = {
     return 'plain';
   },
 
-  // Format markdown content for display as HTML
-  async formatContentMarkdown(content) {
-    // Convert escaped newlines to actual newlines for proper markdown detection
-    const normalizedContent = content.replace(/\\n/g, '\n');
-    const contentType = this.detectContentType(normalizedContent);
-    
-    // Debug logging
-    console.log('formatContentMarkdown:', {
-      originalContent: content.substring(0, 100) + '...',
-      normalizedContent: normalizedContent.substring(0, 100) + '...',
-      contentType: contentType,
-      isMarkdownCheck: this.isMarkdown(normalizedContent)
-    });
+  // Format content for display
+  formatContentMarkdown(content) {
+    const normalized = content.replace(/\\n/g, '\n');
+    const contentType = this.detectContentType(normalized);
     
     switch (contentType) {
       case 'markdown':
-        const htmlResult = await this.markdownToHtml(normalizedContent);
-        console.log('Markdown conversion result:', htmlResult.substring(0, 200) + '...');
-        return htmlResult;
+        return this.markdownToHtml(normalized);
       case 'html':
-        return normalizedContent;
-      case 'plain':
+        return normalized;
       default:
-        return normalizedContent;
+        return normalized;
     }
   },
 
