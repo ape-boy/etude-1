@@ -208,6 +208,8 @@ export default {
       pendingMessages: [],
       renderingScheduled: false,
       batchUpdateTimeout: null,
+      lastMessageTime: 0,
+      resizeObserver: null,
 
       formattedWelcomeMessage: '',
 
@@ -662,11 +664,15 @@ export default {
 
       // AI 응답 완료 후 포커스 복원 및 스크롤 실행
       this.$nextTick(() => {
-        this.scrollToBottomSmooth();
+        // 마크다운 렌더링 완료를 위해 조금 더 대기
+        this.timerManager.safeSetTimeout(() => {
+          this.scrollToBottomSmooth();
+        }, 100);
+        
         // 입력창에 포커스 복원
         this.timerManager.safeSetTimeout(() => {
           this.focusInput();
-        }, 200);
+        }, 300);
       });
 
       if (this.lastApiCall) {
@@ -793,6 +799,7 @@ export default {
     addMessageWithLimit(newMessage) {
 
       this.pendingMessages.push(newMessage);
+      this.lastMessageTime = Date.now();
       this.scheduleBatchUpdate();
     },
 
@@ -838,10 +845,23 @@ export default {
       this.$nextTick(() => {
         const container = this.$refs.messagesContainer;
         if (container) {
-          container.scrollTo({
-            top: container.scrollHeight,
-            behavior: 'auto'
-          });
+          const forceScrollToBottom = (attempts = 0) => {
+            container.scrollTo({
+              top: container.scrollHeight,
+              behavior: 'auto'
+            });
+            
+            // 마크다운 렌더링 완료까지 대기하며 재시도
+            if (attempts < 3) {
+              this.timerManager.safeSetTimeout(() => {
+                if (container.scrollTop < container.scrollHeight - container.clientHeight - 10) {
+                  forceScrollToBottom(attempts + 1);
+                }
+              }, 200);
+            }
+          };
+          
+          forceScrollToBottom();
         }
       });
     },
@@ -851,19 +871,30 @@ export default {
       this.$nextTick(() => {
         const container = this.$refs.messagesContainer;
         if (container) {
-          // 확실한 스크롤을 위해 여러 번 시도
-          const scrollToBottom = () => {
+          const scrollToBottom = (attempts = 0) => {
+            const currentHeight = container.scrollHeight;
+            const targetTop = currentHeight - container.clientHeight;
+            
             container.scrollTo({
-              top: container.scrollHeight,
+              top: currentHeight,
               behavior: 'smooth'
             });
+            
+            // 마크다운 렌더링으로 인한 높이 변화를 감지하여 재스크롤
+            if (attempts < 8) {
+              this.timerManager.safeSetTimeout(() => {
+                const newHeight = container.scrollHeight;
+                const currentScrollTop = container.scrollTop;
+                const isAtBottom = currentScrollTop >= newHeight - container.clientHeight - 100;
+                
+                if (newHeight > currentHeight || !isAtBottom) {
+                  scrollToBottom(attempts + 1);
+                }
+              }, 100 + (attempts * 50)); // 점진적으로 대기 시간 증가
+            }
           };
           
           scrollToBottom();
-          // 100ms 후 다시 한 번 스크롤 (컨텐츠 렌더링 완료 후)
-          this.timerManager.safeSetTimeout(() => {
-            scrollToBottom();
-          }, 100);
         }
       });
     },
@@ -1056,6 +1087,19 @@ export default {
       const messagesContainer = this.$refs.messagesContainer;
       if (messagesContainer) {
         messagesContainer.addEventListener('click', this.handleMessageContainerClick);
+        
+        // ResizeObserver로 컨텐츠 높이 변화 감지하여 자동 스크롤
+        if (window.ResizeObserver) {
+          this.resizeObserver = new ResizeObserver((entries) => {
+            // 새 메시지가 추가된 후 짧은 시간 내에만 자동 스크롤
+            if (this.shouldAutoScroll && Date.now() - this.lastMessageTime < 2000) {
+              this.timerManager.safeSetTimeout(() => {
+                this.scrollToBottomInstantly();
+              }, 50);
+            }
+          });
+          this.resizeObserver.observe(messagesContainer);
+        }
       }
     });
 
@@ -1068,6 +1112,12 @@ export default {
     const messagesContainer = this.$refs.messagesContainer;
     if (messagesContainer) {
       messagesContainer.removeEventListener('click', this.handleMessageContainerClick);
+    }
+
+    // ResizeObserver 정리
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+      this.resizeObserver = null;
     }
 
     this.clearAllTimers();
