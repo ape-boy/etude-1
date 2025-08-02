@@ -16,49 +16,47 @@
           <div class="persona-badge" @mouseenter="showDevInfo = true" @mouseleave="showDevInfo = false">
             <LucideIcon :name="getPersonaIconName(selectedPersona)" fill="white" :width="16" :height="16" />
             <span>{{ getPersonaDisplayName(selectedPersona) }}</span>
-          </div>
 
-          <div v-if="showDevInfo" class="dev-info-tooltip-avatar" @mouseenter="showDevInfo = true"
-            @mouseleave="showDevInfo = false">
-            <div class="dev-info-header">🔧 Dev Info</div>
-            <div class="dev-info-content">
-              <div class="dev-info-item">
-                <span class="dev-label">Messages:</span>
-                <span class="dev-value">{{ messages.length }}/{{ maxSessionMessages }}</span>
-              </div>
-              <div class="dev-info-item">
-                <span class="dev-label">Memory:</span>
-                <span class="dev-value">{{ memoryUsage.used }}MB/{{ memoryUsage.total }}MB</span>
-              </div>
-              <div class="dev-info-item">
-                <span class="dev-label">Pending:</span>
-                <span class="dev-value" :class="{ 'dev-value--active': pendingMessages.length > 0 }">{{
-                  pendingMessages.length }}</span>
-              </div>
-              <div class="dev-info-item">
-                <span class="dev-label">Rendering:</span>
-                <span class="dev-value" :class="{ 'dev-value--active': renderingScheduled }">{{ renderingScheduled ?
-                  'Yes'
-                  : 'No' }}</span>
+            <div v-if="showDevInfo" class="dev-info-tooltip-avatar" @mouseenter="showDevInfo = true"
+              @mouseleave="showDevInfo = false">
+              <div class="dev-info-header">🔧 Dev Info</div>
+              <div class="dev-info-content">
+                <div class="dev-info-item">
+                  <span class="dev-label">Messages:</span>
+                  <span class="dev-value">{{ messages.length }}/{{ maxSessionMessages }}</span>
+                </div>
+                <div class="dev-info-item">
+                  <span class="dev-label">Memory:</span>
+                  <span class="dev-value">{{ memoryUsage.used }}MB/{{ memoryUsage.total }}MB</span>
+                </div>
+                <div class="dev-info-item">
+                  <span class="dev-label">Pending:</span>
+                  <span class="dev-value" :class="{ 'dev-value--active': pendingMessages.length > 0 }">{{
+                    pendingMessages.length }}</span>
+                </div>
+                <div class="dev-info-item">
+                  <span class="dev-label">Rendering:</span>
+                  <span class="dev-value" :class="{ 'dev-value--active': renderingScheduled }">{{ renderingScheduled ?
+                    'Yes'
+                    : 'No' }}</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         <div class="header-actions">
-          <button @click="$emit('go-persona-list')"
-            class="btn-system btn-system--ghost btn-system--sm btn-system--icon-only" title="Change persona">
-            <LucideIcon name="refresh-cw" :width="14" :height="14" :interactive="true" />
+          <button @click="$emit('go-persona-list')" class="btn-system btn-system--ghost btn-system--sm"
+            title="Change persona">
+            <LucideIcon name="refresh-cw" :width="15" :height="15" :interactive="true" />
           </button>
 
-          <button @click="$emit('go-home')" class="btn-system btn-system--ghost btn-system--sm btn-system--icon-only"
-            title="Go home">
-            <LucideIcon name="home" :width="14" :height="14" :interactive="true" />
+          <button @click="$emit('go-home')" class="btn-system btn-system--ghost btn-system--sm" title="Go home">
+            <LucideIcon name="home" :width="15" :height="15" :interactive="true" />
           </button>
 
-          <button @click="clearChatHistory" class="btn-system btn-system--ghost btn-system--sm btn-system--icon-only"
-            title="Delete messages">
-            <LucideIcon name="trash" :width="14" :height="14" :interactive="true" />
+          <button @click="clearChatHistory" class="btn-system btn-system--ghost btn-system--sm" title="Delete messages">
+            <LucideIcon name="trash" :width="15" :height="15" :interactive="true" />
           </button>
         </div>
       </div>
@@ -76,7 +74,8 @@
                 {{ selectedPersona ? getPersonaDisplayName(selectedPersona) : '' }}
               </h2>
             </div>
-            <div class="welcome-message text-secondary" v-if="formattedWelcomeMessage" v-html="formattedWelcomeMessage"></div>
+            <div class="welcome-message text-secondary" v-if="formattedWelcomeMessage" v-html="formattedWelcomeMessage">
+            </div>
             <p class="welcome-description" v-else>{{ getText('welcomeTip') || '' }}</p>
           </div>
         </div>
@@ -109,7 +108,7 @@
             <div class="input-bottom-row">
               <div class="left-actions">
                 <button @click="generateQuickQuestions" :disabled="isProcessing || isQuickQuestionsLoading"
-                  class="btn-system btn-system--ghost btn-system--sm quick-questions-generate-btn"
+                  class="btn-system--sm quick-questions-generate-btn"
                   :title="getText('generateQuestions') || 'Generate questions'">
                   <div v-if="isQuickQuestionsLoading" class="loading-spinner"></div>
                   <LucideIcon v-else name="lightbulb" :width="12" :height="12" :interactive="true" />
@@ -119,10 +118,10 @@
                   'btn-system',
                   'btn-system--sm',
                   'continuous-chat-btn',
-                  continuousChatEnabled ? 'btn-system--success' : 'btn-system--ghost'
-                ]" :title="continuousChatEnabled ? 'Switch to single chat' : 'Switch to continuous chat'">
-                  <LucideIcon :name="continuousChatEnabled ? 'layers' : 'message-square'" :width="12" :height="12"
-                    :interactive="true" />
+                ]"
+                  :title="continuousChatEnabled ? 'Multi-turn conversation mode (remembers previous conversation)' : 'Single conversation mode (independent questions)'"
+                  style="min-width: 95px;">
+                  <span class="chat-mode-text">{{ continuousChatEnabled ? 'MULTI-TURN' : 'SINGLE-TURN' }}</span>
                 </button>
               </div>
 
@@ -425,7 +424,7 @@ export default {
     clearAllTimers() {
       // Clear TimerManager timers
       this.timerManager.clearAllTimers();
-      
+
       // Clear remaining manually managed timers
       if (this.memoryMonitorInterval) {
         this.timerManager.safeClearInterval(this.memoryMonitorInterval);
@@ -654,7 +653,7 @@ export default {
 
       // AI 응답 메시지를 즉시 추가하고 스크롤 실행
       this.messages.push(responseMessage);
-      
+
       // 메시지 제한 확인
       if (this.messages.length > this.maxSessionMessages) {
         const excessCount = this.messages.length - this.maxSessionMessages;
@@ -668,7 +667,7 @@ export default {
         this.timerManager.safeSetTimeout(() => {
           this.scrollToBottomSmooth();
         }, 100);
-        
+
         // 입력창에 포커스 복원
         this.timerManager.safeSetTimeout(() => {
           this.focusInput();
@@ -850,7 +849,7 @@ export default {
               top: container.scrollHeight,
               behavior: 'auto'
             });
-            
+
             // 마크다운 렌더링 완료까지 대기하며 재시도
             if (attempts < 3) {
               this.timerManager.safeSetTimeout(() => {
@@ -860,7 +859,7 @@ export default {
               }, 200);
             }
           };
-          
+
           forceScrollToBottom();
         }
       });
@@ -874,26 +873,26 @@ export default {
           const scrollToBottom = (attempts = 0) => {
             const currentHeight = container.scrollHeight;
             const targetTop = currentHeight - container.clientHeight;
-            
+
             container.scrollTo({
               top: currentHeight,
               behavior: 'smooth'
             });
-            
+
             // 마크다운 렌더링으로 인한 높이 변화를 감지하여 재스크롤
             if (attempts < 8) {
               this.timerManager.safeSetTimeout(() => {
                 const newHeight = container.scrollHeight;
                 const currentScrollTop = container.scrollTop;
                 const isAtBottom = currentScrollTop >= newHeight - container.clientHeight - 100;
-                
+
                 if (newHeight > currentHeight || !isAtBottom) {
                   scrollToBottom(attempts + 1);
                 }
               }, 100 + (attempts * 50)); // 점진적으로 대기 시간 증가
             }
           };
-          
+
           scrollToBottom();
         }
       });
@@ -913,11 +912,11 @@ export default {
         const container = this.$refs.messagesContainer;
         if (container) {
           container.style.scrollBehavior = 'auto';
-          
+
           // 초기 스크롤을 여러 번 시도하여 확실하게 하단으로 이동
           const forceInitialScroll = (attempts = 0) => {
             container.scrollTop = container.scrollHeight;
-            
+
             if (attempts < 5) {
               this.timerManager.safeSetTimeout(() => {
                 const isAtBottom = container.scrollTop >= container.scrollHeight - container.clientHeight - 10;
@@ -927,7 +926,7 @@ export default {
               }, 100 * (attempts + 1));
             }
           };
-          
+
           forceInitialScroll();
 
           this.timerManager.safeSetTimeout(() => {
@@ -1084,16 +1083,16 @@ export default {
     copyCodeToClipboard(button) {
       const codeBlock = button.closest('.md-code-block') || button.closest('.markdown-code-block');
       const pre = codeBlock?.querySelector('pre');
-      
+
       if (pre) {
         const rawCodeElement = pre.querySelector('.raw-code');
         const codeText = rawCodeElement ? rawCodeElement.textContent : pre.textContent.trim();
-        
+
         navigator.clipboard.writeText(codeText).then(() => {
           const originalText = button.textContent;
           button.textContent = 'Copied!';
           button.classList.add('copied');
-          
+
           this.timerManager.safeSetTimeout(() => {
             button.textContent = originalText;
             button.classList.remove('copied');
@@ -1118,7 +1117,7 @@ export default {
       const messagesContainer = this.$refs.messagesContainer;
       if (messagesContainer) {
         messagesContainer.addEventListener('click', this.handleMessageContainerClick);
-        
+
         // ResizeObserver로 컨텐츠 높이 변화 감지하여 자동 스크롤
         if (window.ResizeObserver) {
           this.resizeObserver = new ResizeObserver((entries) => {
@@ -1131,7 +1130,7 @@ export default {
           });
           this.resizeObserver.observe(messagesContainer);
         }
-        
+
         // 초기 진입 시 스크롤을 하단으로 이동
         this.timerManager.safeSetTimeout(() => {
           this.setInitialScrollPosition();
@@ -1173,533 +1172,4 @@ export default {
 };
 </script>
 
-<style scoped>
-.chat-tab {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  background: var(--color-surface-light);
-  position: relative;
-}
-
-.no-persona-selected {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  padding: var(--space-xl);
-}
-
-.persona-selection-guide {
-  text-align: center;
-  max-width: 320px;
-}
-
-.guide-icon {
-  margin-bottom: var(--space-lg);
-}
-
-.guide-title {
-  font-size: var(--font-size-lg);
-  font-weight: 600;
-  margin-bottom: var(--space-sm);
-}
-
-.guide-description {
-  font-size: var(--font-size-base);
-  line-height: 1.6;
-}
-
-.chat-interface {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  border: 1px solid var(--color-border-light);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  background: var(--color-surface-white);
-}
-
-.messages-container {
-  flex: 1;
-  overflow-y: auto;
-  padding: var(--space-lg) var(--space-xl) var(--space-md);
-  scroll-behavior: smooth;
-  background: var(--color-surface-light);
-}
-
-.messages-container.smooth-scroll {
-  scroll-behavior: smooth;
-}
-
-.messages-container.initial-loading {
-  scroll-behavior: auto;
-}
-
-.loading-history {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-md);
-  padding: var(--space-xl);
-}
-
-.loading-text {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
-  font-weight: 500;
-}
-
-.welcome-section {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 200px;
-  margin-bottom: var(--space-xl);
-}
-
-.welcome-content {
-  text-align: center;
-  max-width: 400px;
-}
-
-.welcome-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-md);
-  margin-bottom: var(--space-lg);
-}
-
-.persona-avatar {
-  width: 48px;
-  height: 48px;
-  background: var(--color-primary);
-  color: var(--color-text-light);
-  border-radius: var(--radius-full);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: var(--shadow-soft);
-}
-
-.welcome-title {
-  font-size: var(--font-size-xl);
-  font-weight: 600;
-  margin: 0;
-}
-
-.welcome-section {
-  text-align: center;
-  padding: var(--space-lg) var(--space-xl) var(--space-md);
-  flex-shrink: 0;
-}
-
-.welcome-message {
-  font-size: var(--font-size-base);
-  margin: 0;
-  line-height: 1.5;
-  padding: 0 var(--space-md);
-}
-
-.input-area {
-  background: var(--color-surface-white);
-  border-top: 1px solid var(--color-border-light);
-  padding: var(--space-md) var(--space-xl) var(--space-lg);
-  z-index: 5;
-  position: relative;
-}
-
-/* 빠른 질문 드롭다운 스타일 */
-.quick-questions-dropdown {
-  position: absolute;
-  top: -8px;
-  left: var(--space-xl);
-  right: var(--space-xl);
-  background: var(--color-surface-white);
-  border: 1px solid var(--color-border-light);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-moderate);
-  z-index: 10;
-  transform: translateY(-100%);
-}
-
-.quick-questions-list {
-  max-height: 200px;
-  overflow-y: auto;
-}
-
-.quick-question-item {
-  padding: var(--space-sm) var(--space-md);
-  cursor: pointer;
-  border-bottom: 1px solid var(--color-border-light);
-  transition: background-color var(--motion-fast);
-  font-size: var(--font-size-sm);
-  line-height: 1.4;
-}
-
-.quick-question-item:last-child {
-  border-bottom: none;
-}
-
-.quick-question-item:hover {
-  background-color: var(--color-accent-subtle);
-}
-
-.quick-question-item:active {
-  background-color: var(--color-accent-medium);
-}
-
-.input-container {
-  padding: var(--space-sm);
-  transition: all var(--motion-fast);
-  position: relative;
-  border: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.input-container.enhanced-input--focused {
-  border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px var(--color-accent-subtle);
-  transform: translateY(-1px);
-}
-
-.input-container.enhanced-input--expanded {
-  border-color: var(--color-accent-secondary);
-}
-
-.input-box {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-}
-
-.message-textarea {
-  height: 38px;
-  min-height: 38px;
-  max-height: 400px;
-  border: 1px solid rgba(0, 0, 0, 0.03);
-  resize: none;
-  margin: 0;
-  transition: none;
-  overflow: hidden;
-  overflow-y: auto;
-  word-wrap: break-word;
-  white-space: pre-wrap;
-  border-radius: var(--radius-md);
-}
-
-.message-textarea::placeholder {
-  opacity: 0.7;
-}
-
-.message-textarea:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-.input-bottom-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.left-actions {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.btn-text {
-  margin-left: 4px;
-  font-size: var(--font-size-xs);
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.quick-questions-generate-btn,
-.continuous-chat-btn {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: var(--space-sm) !important;
-  transition: all 0.2s ease;
-  border-radius: var(--radius-md);
-  background: transparent !important;
-  border: none !important;
-}
-
-.quick-questions-generate-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.15);
-}
-
-.continuous-chat-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.15);
-}
-
-.send-button-enhanced {
-  position: relative;
-}
-
-.send-button-enhanced.loading {
-  animation: pulse-send-enhanced 1.8s ease-in-out infinite;
-}
-
-.loading-spinner {
-  width: 12px;
-  height: 12px;
-  border: 2px solid var(--color-border-light);
-  border-top: 2px solid var(--color-accent);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes pulse-send-enhanced {
-
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
-  }
-
-  50% {
-    box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
-  }
-}
-
-.dev-info-tooltip {
-  position: absolute;
-  bottom: 100%;
-  right: 0;
-  background: var(--color-text-primary);
-  color: var(--color-text-light);
-  padding: var(--space-sm);
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-xs);
-  white-space: nowrap;
-  z-index: 1000;
-  margin-bottom: var(--space-sm);
-  border: 1px solid var(--color-border-medium);
-  box-shadow: var(--shadow-moderate);
-  font-family: 'Monaco', 'Menlo', 'SF Mono', 'Consolas', 'Courier New', monospace;
-  backdrop-filter: blur(var(--blur-strong));
-  -webkit-backdrop-filter: blur(var(--blur-strong));
-  animation: fadeInUp 0.2s ease-out;
-}
-
-.dev-info-tooltip-avatar {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background: var(--color-text-primary);
-  color: var(--color-text-light);
-  padding: var(--space-sm);
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-xs);
-  white-space: nowrap;
-  z-index: 1000;
-  margin-top: var(--space-sm);
-  border: 1px solid var(--color-border-medium);
-  box-shadow: var(--shadow-moderate);
-  font-family: 'Monaco', 'Menlo', 'SF Mono', 'Consolas', 'Courier New', monospace;
-  backdrop-filter: blur(var(--blur-strong));
-  -webkit-backdrop-filter: blur(var(--blur-strong));
-  animation: fadeInDown 0.2s ease-out;
-}
-
-.dev-info-header {
-  font-weight: 600;
-  margin-bottom: var(--space-xs);
-  text-align: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  padding-bottom: var(--space-xs);
-}
-
-.dev-info-content {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.dev-info-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--space-sm);
-}
-
-.dev-label {
-  opacity: 0.8;
-}
-
-.dev-value {
-  font-weight: 600;
-  color: var(--color-accent-secondary);
-}
-
-.dev-value--active {
-  color: var(--color-success) !important;
-  position: relative;
-}
-
-.dev-value--active::before {
-  content: '';
-  position: absolute;
-  left: -8px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 4px;
-  height: 4px;
-  background: var(--color-success);
-  border-radius: 50%;
-  animation: pulse-dot 2s ease-in-out infinite;
-}
-
-@keyframes pulse-dot {
-
-  0%,
-  100% {
-    opacity: 0.7;
-    transform: translateY(-50%) scale(1);
-  }
-
-  50% {
-    opacity: 1;
-    transform: translateY(-50%) scale(1.2);
-    box-shadow: 0 0 8px var(--color-success);
-  }
-}
-
-.input-container.enhanced-input--scrolling::after {
-  content: "↕️ 스크롤하여 전체 내용 확인";
-  position: absolute;
-  bottom: -22px;
-  right: 0;
-  font-size: 10px;
-  color: var(--color-text-muted);
-  background: var(--color-surface-white);
-  padding: 2px 6px;
-  border-radius: 4px;
-  border: 1px solid var(--color-border-light);
-  z-index: 5;
-}
-
-@media (max-width: 768px) {
-
-  .quick-questions-generate-btn,
-  .continuous-chat-btn {
-    min-width: auto;
-    padding: var(--space-sm) !important;
-  }
-
-  .btn-text {
-    display: none;
-  }
-}
-
-@media (max-width: 640px) {
-  .input-area {
-    padding: var(--space-sm) var(--space-md) var(--space-sm);
-  }
-
-  .input-container {
-    padding: 6px;
-  }
-
-  .input-box {
-    gap: 6px;
-  }
-
-  .message-textarea {
-    height: 21px;
-    min-height: 21px;
-  }
-
-  .left-actions {
-    gap: 4px;
-  }
-
-  .dev-info-tooltip {
-    font-size: 10px;
-    min-width: 140px;
-  }
-
-  .dev-info-header,
-  .dev-label,
-  .dev-value {
-    font-size: 9px;
-  }
-
-  .quick-questions-dropdown {
-    left: var(--space-md);
-    right: var(--space-md);
-  }
-}
-
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-16px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* 채팅 헤더 스타일 */
-.chat-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--space-md) var(--space-lg);
-  background: var(--color-surface-white);
-  border-bottom: 1px solid var(--color-border-light);
-  min-height: 56px;
-}
-
-.persona-info {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  position: relative;
-}
-
-.persona-badge {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-xs) var(--space-sm);
-  background: var(--color-primary);
-  color: white;
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  cursor: pointer;
-  transition: all var(--motion-fast);
-  position: relative;
-}
-
-.persona-badge:hover {
-  background: var(--color-primary-dark);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-soft);
-}
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-}
-</style>
+<style scoped></style>

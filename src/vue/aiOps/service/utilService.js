@@ -51,16 +51,13 @@ const utilService = {
     return patterns.some(pattern => pattern.test(content));
   },
 
-  // Detect content type (html, markdown, or plain)
   detectContentType(content) {
     if (!content || typeof content !== 'string') return 'plain';
     
-    // Check for markdown first (more specific)
     if (this.isMarkdown(content)) {
       return 'markdown';
     }
     
-    // Then check for actual HTML tags (more restrictive)
     if (/<[a-zA-Z][^>]*>.*<\/[a-zA-Z][^>]*>/.test(content) || 
         /<[a-zA-Z][^>]*\/?>/.test(content)) {
       return 'html';
@@ -69,7 +66,6 @@ const utilService = {
     return 'plain';
   },
 
-  // Format content for display
   formatContentMarkdown(content) {
     const normalized = content.replace(/\\n/g, '\n');
     const contentType = this.detectContentType(normalized);
@@ -84,7 +80,6 @@ const utilService = {
     }
   },
 
-  // Convert HTML content to Markdown format for copying
   convertHtmlToMarkdown(content) {
     const contentType = this.detectContentType(content);
     
@@ -103,7 +98,6 @@ const utilService = {
   // HTML to Text Conversion Functions
   // ============================================
 
-  // Convert HTML content to markdown format
   htmlToMarkdown(htmlContent) {
     if (!htmlContent || typeof htmlContent !== 'string') {
       return htmlContent;
@@ -196,7 +190,6 @@ const utilService = {
     return markdown;
   },
 
-  // Convert HTML content to plain text
   htmlToPlainText(htmlContent) {
     if (!htmlContent || typeof htmlContent !== 'string') {
       return htmlContent;
@@ -309,14 +302,12 @@ const utilService = {
       if (typeof rawData === 'string') {
         const cleanData = rawData.trim();
         
-        // Try parsing JSON array format
         const jsonMatch = cleanData.match(/\[\s*"[^"]*"(?:\s*,\s*"[^"]*")*\s*\]/);
         if (jsonMatch) {
           const questions = JSON.parse(jsonMatch[0]);
           return Array.isArray(questions) ? questions.filter(q => q && q.trim()).slice(0, 5) : [];
         }
         
-        // Parse line by line
         return cleanData.split(/\r?\n/)
           .map(line => line.trim())
           .filter(line => line && !line.match(/^[\[\]\r\n\s\-\*]*$/))
@@ -325,12 +316,10 @@ const utilService = {
           .slice(0, 5);
       }
       
-      // Handle array data
       if (Array.isArray(rawData)) {
         return rawData.filter(q => q && q.trim() && q.trim().length > 5).slice(0, 5);
       }
       
-      // Handle object data
       if (rawData && typeof rawData === 'object') {
         const questions = rawData.questions || rawData.queries || rawData.data || [];
         return Array.isArray(questions) ? questions.filter(q => q && q.trim()).slice(0, 5) : [];
