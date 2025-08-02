@@ -144,7 +144,7 @@ class convertMarkdownToHtml {
       // Handle lists
       const indentMatch = originalLine.match(/^(\s*)/);
       const indentLevel = indentMatch ? Math.floor(indentMatch[1].length / 2) : 0;
-      const isUnordered = line.match(/^[-*+]\s+(.+)$/);
+      const isUnordered = line.match(/^[*+]\s+(.+)$/);  // Remove - from unordered list markers
       const isOrdered = line.match(/^\d+\.\s+(.+)$/);
       
       if (isUnordered || isOrdered) {
