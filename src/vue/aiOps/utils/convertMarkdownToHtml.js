@@ -148,7 +148,13 @@ class convertMarkdownToHtml {
       const isOrdered = line.match(/^\d+\.\s+(.+)$/);
       
       if (isUnordered || isOrdered) {
-        html += this._adjustListStack(listStack, indentLevel, isUnordered ? 'ul' : 'ol');
+        const currentListType = isUnordered ? 'ul' : 'ol';
+        
+        // 같은 레벨에서 같은 타입의 리스트가 계속되는 경우 새로운 리스트 컨테이너를 생성하지 않음
+        if (listStack.length === 0 || listStack.length !== indentLevel + 1 || listStack[listStack.length - 1] !== currentListType) {
+          html += this._adjustListStack(listStack, indentLevel, currentListType);
+        }
+        
         const item = isUnordered ? isUnordered[1] : isOrdered[1];
         html += `<li class="markdown-list-item">${this._parseInline(item.trim())}</li>`;
         continue;

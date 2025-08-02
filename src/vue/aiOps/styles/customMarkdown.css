@@ -149,42 +149,37 @@
 /* Ordered lists - restore numbering */
 .markdown-content ol {
   padding-left: var(--space-lg);
-  counter-reset: list-counter;
-  list-style: none;
+  list-style-type: decimal;
+  list-style-position: outside;
 }
 
 .markdown-content ol > li {
-  display: block;
+  display: list-item;
   margin: 4px 0;
-  position: relative;
-  padding-left: var(--space-lg);
-  margin-left: 0;
+  padding-left: var(--space-xs);
+  margin-left: var(--space-md);
   line-height: 1.6;
-  counter-increment: list-counter;
 }
 
-.markdown-content ol > li::before {
-  content: counter(list-counter) ".";
-  position: absolute;
-  left: 0;
+.markdown-content ol > li::marker {
   color: var(--color-primary);
   font-weight: 600;
-  min-width: var(--space-md);
 }
 
 /* Nested ordered lists */
 .markdown-content ol ol {
-  counter-reset: nested-counter;
   margin-top: 4px;
+  list-style-type: decimal;
 }
 
 .markdown-content ol ol > li {
-  counter-increment: nested-counter;
-  padding-left: var(--space-xl);
+  padding-left: var(--space-xs);
+  margin-left: var(--space-lg);
 }
 
-.markdown-content ol ol > li::before {
-  content: counter(nested-counter) ".";
+.markdown-content ol ol > li::marker {
+  color: var(--color-primary);
+  font-weight: 600;
 }
 
 /* Code styles */
