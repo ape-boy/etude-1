@@ -134,7 +134,7 @@ class convertMarkdownToHtml {
 
       // Handle headers
       if (line.startsWith('#')) {
-        this._closeLists(html, listStack);
+        html += this._closeLists(listStack);
         const level = line.match(/^#+/)[0].length;
         const text = line.replace(/^#+\s*/, '').trim();
         html += `<h${level} class="markdown-h${level} markdown-heading">${this._parseInline(text)}</h${level}>`;
@@ -148,12 +148,12 @@ class convertMarkdownToHtml {
       const isOrdered = line.match(/^\d+\.\s+(.+)$/);
       
       if (isUnordered || isOrdered) {
-        this._adjustListStack(html, listStack, indentLevel, isUnordered ? 'ul' : 'ol');
+        html += this._adjustListStack(listStack, indentLevel, isUnordered ? 'ul' : 'ol');
         const item = isUnordered ? isUnordered[1] : isOrdered[1];
         html += `<li class="markdown-list-item">${this._parseInline(item.trim())}</li>`;
         continue;
       } else {
-        this._closeLists(html, listStack);
+        html += this._closeLists(listStack);
       }
 
       // Handle blockquotes (only if not in alert)
@@ -193,14 +193,14 @@ class convertMarkdownToHtml {
 
       // Handle horizontal rules
       if (line.match(/^[-*]{3,}$/)) {
-        this._closeLists(html, listStack);
+        html += this._closeLists(listStack);
         html += '<hr class="markdown-hr">';
         continue;
       }
 
       // Handle paragraphs
       if (line.trim()) {
-        this._closeLists(html, listStack);
+        html += this._closeLists(listStack);
         const prevLineEndsWithTwoSpaces = i > 0 && lines[i-1].endsWith('  ');
         if (paragraphBuffer.length > 0 && prevLineEndsWithTwoSpaces) {
           paragraphBuffer.push('<br>' + this._parseInline(line));
@@ -215,7 +215,7 @@ class convertMarkdownToHtml {
           html += `<p class="markdown-paragraph">${paragraphBuffer.join('')}</p>`;
           paragraphBuffer = [];
         }
-        this._closeLists(html, listStack);
+        html += this._closeLists(listStack);
         if (inBlockquote) {
           html += '</blockquote>';
           inBlockquote = false;
@@ -224,7 +224,7 @@ class convertMarkdownToHtml {
     }
 
     // Close all remaining open elements
-    this._closeAll(html, paragraphBuffer, inCodeBlock, inAlert, listStack, inBlockquote, inTable, tableRows);
+    html += this._closeAll(paragraphBuffer, inCodeBlock, inAlert, listStack, inBlockquote, inTable, tableRows);
 
     return `<div class="markdown-content">${html}</div>`;
   }
@@ -233,45 +233,57 @@ class convertMarkdownToHtml {
    * Close all list elements
    * @private
    */
-  _closeLists(html, listStack) {
+  _closeLists(listStack) {
+    let closingHtml = '';
     while (listStack.length > 0) {
-      html += `</${listStack.pop()}>`;
+      closingHtml += `</${listStack.pop()}>`;
     }
+    return closingHtml;
   }
 
   /**
    * Adjust list stack for nested lists
    * @private
    */
-  _adjustListStack(html, listStack, level, type) {
+  _adjustListStack(listStack, level, type) {
+    let adjustHtml = '';
+    
     while (listStack.length > level) {
-      html += `</${listStack.pop()}>`;
+      adjustHtml += `</${listStack.pop()}>`;
     }
+    
     if (listStack.length < level) {
-      html += `<${type} class="markdown-list">`;
+      adjustHtml += `<${type} class="markdown-list">`;
       listStack.push(type);
     } else if (listStack.length === level && listStack[listStack.length - 1] !== type) {
-      html += `</${listStack.pop()}>`;
-      html += `<${type} class="markdown-list">`;
+      adjustHtml += `</${listStack.pop()}>`;
+      adjustHtml += `<${type} class="markdown-list">`;
       listStack.push(type);
     }
+    
+    return adjustHtml;
   }
 
   /**
    * Close all remaining open elements
    * @private
    */
-  _closeAll(html, paragraphBuffer, inCodeBlock, inAlert, listStack, inBlockquote, inTable, tableRows) {
+  _closeAll(paragraphBuffer, inCodeBlock, inAlert, listStack, inBlockquote, inTable, tableRows) {
+    let closingHtml = '';
+    
     if (paragraphBuffer.length > 0) {
-      html += `<p class="markdown-paragraph">${paragraphBuffer.join('')}</p>`;
+      closingHtml += `<p class="markdown-paragraph">${paragraphBuffer.join('')}</p>`;
+      paragraphBuffer.length = 0; // Clear the buffer
     }
-    if (inCodeBlock) html += '</pre></div>';
-    if (inAlert) html += '</div></div>';
-    this._closeLists(html, listStack);
-    if (inBlockquote) html += '</blockquote>';
+    if (inCodeBlock) closingHtml += '</pre></div>';
+    if (inAlert) closingHtml += '</div></div>';
+    closingHtml += this._closeLists(listStack);
+    if (inBlockquote) closingHtml += '</blockquote>';
     if (inTable) {
-      html += this._processTable(tableRows);
+      closingHtml += this._processTable(tableRows);
     }
+    
+    return closingHtml;
   }
 
   /**
